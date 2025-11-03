@@ -1,9 +1,8 @@
-name: starter-kit
+name: mensahero-gateway
 php: '8.4'
 secured: false
 aliases:
-    - starter.test
-    - starter-kit.test
+    - mensahero.test
 services: {  }
 integrations:
     forge: {  }
