@@ -102,19 +102,19 @@ const items = computed<NavigationMenuItem[]>(() => [{
 
                     <!-- Trust Indicators -->
                     <div class="mt-8 sm:mt-12 lg:mt-16 grid grid-cols-2 gap-3 sm:flex sm:flex-wrap sm:items-center sm:justify-center sm:gap-6 lg:gap-8 text-xs sm:text-sm text-gray-500 dark:text-gray-400">
-                        <div class="flex items-center justify-center gap-1.5 sm:gap-2">
+                        <div class="flex items-center px-3 sm:px-0 gap-1.5 sm:gap-2">
                             <UIcon name="i-heroicons-check-circle-solid" class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
                             <span>Open Source</span>
                         </div>
-                        <div class="flex items-center justify-center gap-1.5 sm:gap-2">
+                        <div class="flex items-center px-5 sm:px-0 gap-1.5 sm:gap-2">
                             <UIcon name="i-heroicons-shield-check-solid" class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
                             <span>MIT Licensed</span>
                         </div>
-                        <div class="flex items-center justify-center gap-1.5 sm:gap-2">
+                        <div class="flex items-center px-3 sm:px-0 gap-1.5 sm:gap-2">
                             <UIcon name="i-heroicons-users-solid" class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
                             <span>Community Driven</span>
                         </div>
-                        <div class="flex items-center justify-center gap-1.5 sm:gap-2">
+                        <div class="flex items-center px-5 sm:px-0 gap-1.5 sm:gap-2">
                             <UIcon name="i-heroicons-heart-solid" class="h-4 w-4 sm:h-5 sm:w-5 text-green-500 flex-shrink-0" />
                             <span>Made in PH</span>
                             <UIcon name="circle-flags:ph" class="h-4 w-4 sm:h-5 sm:w-5 flex-shrink-0" />
