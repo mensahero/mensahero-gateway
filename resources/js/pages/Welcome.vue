@@ -1,7 +1,28 @@
+<script setup lang="ts">
+import { router } from '@inertiajs/vue3'
+import { computed } from 'vue'
+import type { NavigationMenuItem } from '@nuxt/ui'
+
+const items = computed<NavigationMenuItem[]>(() => [{
+    label: 'Login',
+    to: route('login', {}, false),
+    icon: 'i-lucide:log-in',
+}, {
+    label: 'Get Started',
+    to: route('register', {}, false),
+    icon: 'i-lucide-box',
+}, {
+    label: 'Github',
+    icon: 'simple-icons:github',
+    to: 'https://github.com/mensahero/mensahero-gateway',
+    target: '_blank'
+}])
+</script>
+
 <template>
     <div class="min-h-screen bg-white dark:bg-gray-900">
         <!-- Navigation Header -->
-        <UHeader class="border-b border-gray-200 bg-white/95 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/95 sticky top-0 z-50">
+        <UHeader mode="drawer" class="border-b border-gray-200 bg-white/95 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/95 sticky top-0 z-50">
             <template #title>
                 <div class="flex items-center gap-2 sm:gap-3">
                     <div class="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-gradient-to-br from-red-600 to-red-700">
@@ -12,7 +33,7 @@
             </template>
 
             <template #right>
-                <div class="flex items-center gap-2 sm:gap-3">
+                <div class="hidden items-center gap-2 sm:gap-3 lg:block">
                     <UButton
                         variant="ghost"
                         size="sm"
@@ -26,10 +47,12 @@
                         class="bg-red-600 hover:bg-red-700 text-white"
                         @click="router.visit(route('register'))"
                     >
-                        <span class="hidden sm:inline">Get Started</span>
-                        <span class="sm:hidden">Sign Up</span>
+                        <span class="hidden sm:block">Get Started</span>
                     </UButton>
                 </div>
+            </template>
+            <template #body>
+                <UNavigationMenu :items="items" orientation="vertical" class="-mx-2.5" />
             </template>
         </UHeader>
 
@@ -423,9 +446,6 @@
     </div>
 </template>
 
-<script setup lang="ts">
-import { router } from '@inertiajs/vue3'
-</script>
 
 <style scoped>
 .bg-grid-pattern {
