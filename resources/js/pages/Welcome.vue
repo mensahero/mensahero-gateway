@@ -29,7 +29,7 @@ const items = computed<NavigationMenuItem[]>(() => [{
             </template>
 
             <template #right>
-                <div class="hidden items-center gap-2 sm:gap-3 lg:block">
+                <div class="hidden items-center gap-2 sm:gap-4 space-x-2 lg:block">
                     <UButton
                         variant="ghost"
                         size="sm"
