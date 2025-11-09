@@ -1,123 +1,137 @@
 
-# 🚀 Starter Kit for Laravel
+# 📡 Mensahero — SMS Gateway & Messaging Platform
 
-A modern, feature-rich starter kit for Laravel applications that combines the power of Laravel with Vue 3, Nuxt UI, and TailwindCSS. This starter kit provides a solid foundation for building scalable web applications with modern development practices.
+Mensahero (from the Filipino/Waray word for “messenger”) is a modern SMS gateway and message delivery platform that helps businesses send and receive messages reliably. Built on Laravel with a Vue 3 frontend, Mensahero provides developer-friendly APIs, real-time dashboards, and production-ready tooling to get you from prototype to scale.
 
-## 🎯 About Project
 
-This starter kit is designed to jumpstart your Laravel development with a carefully curated selection of tools and packages. It includes modern frontend technologies, comprehensive testing setup, code quality tools, and development utilities to help you build maintainable and scalable applications.
+## 🎯 What is Mensahero?
+Mensahero centralizes outbound and inbound SMS, queues deliveries for reliability, and offers tools to monitor delivery status, retries, and message logs. It’s ideal for OTPs, notifications, alerts, and transactional messaging.
 
-## Screenshots
-Explore the screenshots of the starter kit by navigating to the [Screenshots](https://github.com/marjose123/starter-kit/tree/main/.art/screenshots) folder.
+## 🖼️ Branding
+- Name: Mensahero — “messenger” in Filipino/Waray
+- Colors:
+  - Warm Filipino Deep Red: `#D72638`
+  - Warm Filipino Golden Yellow: `#FFBE0B`
+- Typography:
+  - Headings: Poppins
+  - Body: Nunito
 
+These are applied across the UI (see `resources/css/app.css` and Vue components) and assets like `public/favicon.svg`.
 
 ## 🛠️ Tech Stack
 
 ### Backend
-- 🐘 **PHP 8.4** - Latest PHP version with modern features
-- 🎨 **Laravel 12** - The latest Laravel framework
-- ⚡ **Inertia.js** - Modern monolith approach for SPAs
+- 🐘 PHP 8.4
+- 🎨 Laravel 12
+- ⚡ Inertia.js (SPA without a separate API layer)
 
 ### Frontend
-- 🖼️ **Vue 3** - Progressive JavaScript framework
-- 🎨 **Nuxt UI** - Beautiful and accessible UI components
-- 🎯 **TailwindCSS 4** - Utility-first CSS framework
-- 📦 **TypeScript** - Type-safe JavaScript development
-- ⚡ **Vite** - Fast build tool and dev server
+- 🖼️ Vue 3
+- 🎯 TailwindCSS 4
+- 📦 TypeScript
+- ⚡ Vite
+- 🧩 Nuxt UI component primitives integrated for consistency
 
-### Development Tools
-- 🧪 **Pest PHP** - Elegant PHP testing framework
-- 🎭 **Playwright** - End-to-end testing for web apps
-- 🔍 **PHPStan** - Static analysis for PHP
-- 🎨 **Laravel Pint** - Code style fixer for Laravel
-- ♻️ **Rector** - Automated refactoring tool
-- 📋 **ESLint** - JavaScript/TypeScript linting
-- 💅 **Prettier** - Code formatting
-- 🐳 **Laravel Sail** - Docker development environment
-- 📧 **Mailpit** - Email testing tool
+### Development & Quality
+- 🧪 Pest PHP (backend tests)
+- 🎭 Playwright (end-to-end tests)
+- 🔍 PHPStan (static analysis)
+- 🎨 Laravel Pint (code style)
+- ♻️ Rector (automated refactors)
+- 📋 ESLint + 💅 Prettier (frontend)
+- 🐳 Laravel Sail (optional Docker dev)
+- 📧 Mailpit (email testing)
 
-## ✨ Features / Functionality
+## ✨ Key Features
+- 🔐 Authentication (Laravel Fortify)
+- 🔁 Token-based API auth with refresh and device/session management
+- 📤 Outbound SMS sending with queued deliveries
+- 📥 Inbound message handling (webhooks/provider callbacks)
+- 🔄 Automatic retry on transient failures
+- 📊 Message logs and status tracking (sent, delivered, failed)
+- 🔔 Notifications and audit trails
+- 🌗 Theme/appearance middleware and responsive design
 
-### Core Features
-- 🔐 **User Authentication** - Complete authentication system with Laravel Fortify
-- 🛡️ **Two-Factor Authentication (2FA)** - Integration with recovery codes
-- 🔒 **Password Confirmation** - Secure page protection with password confirmation middleware
-- 🌐 **RESTful API** - Full API authentication with token refresh and management
-- 📱 **Session Management** - Device tracking, location data, and session revocation
-- 🎨 **Appearance Management** - Custom middleware for theme/appearance handling  
-- 📱 **Responsive Design** - Mobile-first approach with TailwindCSS
-- ⚡ **SPA Experience** - Seamless navigation with Inertia.js
-- 🔔 **Notifications** - Integrated notification system
-- 📚 **API Documentation** - Auto-generated API docs with Scramble
-- 🔍 **Device Detection** - Comprehensive user agent and location tracking
+> Note: Some features may require provider configuration and webhooks.
 
-## 🚀 Installation
+## 🚀 Getting Started
 
 ### Prerequisites
-- PHP 8.4 or higher
+- PHP 8.4+
 - Composer
-- Node.js & npm
+- Node.js (LTS) & npm
 - Git
+- A database (SQLite/MySQL/PostgreSQL) — SQLite is fine for local
 
-### Quick Start with Laravel Installer
-
-If you have the Laravel installer globally installed, you can create a new project using this starter kit:
-
+### Installation
+1) Clone the repo
 ```bash
-composer global require laravel/installer
-
-laravel new example-app --using=marjose123/laravel-nuxtui-starter-kit
+git clone https://github.com/your-org/mensahero-gateway.git
+cd mensahero-gateway
 ```
 
-### Manual Installation
+2) Install dependencies
+```bash
+composer install
+npm install
+```
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/marjose123/laravel-nuxtui-starter-kit.git
-   cd starter-kit
-   ```
+3) Configure environment
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+Update `.env` with your database and any SMS provider credentials (e.g., Twilio, Nexmo/Vonage, etc.).
 
-2. **Install PHP dependencies**
-   ```bash
-   composer install
-   ```
+4) Database setup
+```bash
+# Example for SQLite
+type NUL > database\database.sqlite
+php artisan migrate
+```
 
-3. **Install Node.js dependencies**
-   ```bash
-   npm install
-   ```
-
-4. **Environment setup**
-   ```bash
-   cp .env.example .env
-   php artisan key:generate
-   ```
-
-5. **Database setup**
-   ```bash
-   touch database/database.sqlite
-   php artisan migrate
-   ```
-
-6. **Start development servers**
-   ```bash
-   composer dev
-   # or separately:
-   # php artisan serve
-   # npm run dev
-   ```
+5) Start development servers
+```bash
+composer dev
+# or run separately
+# php artisan serve
+# npm run dev
+```
 
 ### Available Scripts
+- `composer dev` — Start API + Vite concurrently
+- `composer dev:ssr` — Start with server‑side rendering
+- `composer test` — Run backend tests
+- `composer format` — Format frontend and backend code
+- `composer analyse` — Static analysis
+- `npm run dev` — Vite dev server
+- `npm run build` — Production build
+- `npm run lint` — Lint frontend
 
-- `composer dev` - Start all development servers concurrently
-- `composer dev:ssr` - Start with server-side rendering
-- `composer test` - Run PHP tests
-- `composer format` - Format both frontend and backend code
-- `composer analyse` - Run static analysis
-- `npm run dev` - Start Vite dev server
-- `npm run build` - Build for production
-- `npm run lint` - Lint frontend code
+## 🔧 Configuration
+Core environment variables to review in `.env`:
+- `APP_NAME=Mensahero`
+- `APP_URL=http://localhost`
+- `APP_ENV=local`
+- `APP_DEBUG=true`
+- Database settings (`DB_CONNECTION`, `DB_DATABASE`, ...)
+- Queue connection (`QUEUE_CONNECTION=database|redis`)
+- Cache/session drivers
+- SMS provider credentials and webhook URLs (set based on your chosen provider)
+
+See `config/app.php` and `resources/js/pages/Welcome.vue` for app branding usage.
+
+## 🧭 Project Highlights
+- Blade shell: `resources/views/app.blade.php`
+- Global styles and brand tokens: `resources/css/app.css`
+- Vue entry pages/components: `resources/js/pages` and `resources/js/components`
+- Icons/branding assets: `public/favicon.svg`, `public/apple-touch-icon.png`
+
+## 🤝 Contributing
+Pull requests are welcome! Please run formatters and linters before submitting:
+```bash
+composer format && npm run lint
+```
 
 ## 📄 License
-
-The Starter-kit for Laravel is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Mensahero is open‑sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
