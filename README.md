@@ -3,6 +3,7 @@
 
 Mensahero (from the Filipino/Waray word for “messenger”) is a modern SMS gateway and message delivery platform that helps businesses send and receive messages reliably. Built on Laravel with a Vue 3 frontend, Mensahero provides developer-friendly APIs, real-time dashboards, and production-ready tooling to get you from prototype to scale.
 
+![](.art/screenshots/mensahero-landing-page.png)
 
 ## 🎯 What is Mensahero?
 Mensahero centralizes outbound and inbound SMS, queues deliveries for reliability, and offers tools to monitor delivery status, retries, and message logs. It’s ideal for OTPs, notifications, alerts, and transactional messaging.
