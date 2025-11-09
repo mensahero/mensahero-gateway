@@ -30,20 +30,21 @@
         }
     </style>
 
-    <title inertia>{{ config('app.name', 'MarJose123/starter-kit') }}</title>
+    <title inertia>{{ config('app.name', 'Mensahero Gateway') }}</title>
 
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    <link href="https://fonts.bunny.net/css?family=nunito:400,400i,500,500i,600,600i,700,700i,800,800i|poppins:400,400i,500,500i,600,600i,700,700i,800,800i" rel="stylesheet" />
+
 
     @routes
     @vite(['resources/js/app.ts', "resources/js/pages/{$page['component']}.vue"])
     @inertiaHead
 </head>
-<body class="font-sans antialiased">
+<body class="font-nunito antialiased">
 @inertia
 </body>
 </html>
