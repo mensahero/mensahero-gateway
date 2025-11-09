@@ -35,7 +35,7 @@ export default defineConfig({
             },
             ui: {
                 colors: {
-                    primary: 'green',
+                    primary: 'brand-red',
                     neutral: 'slate',
                 },
             },

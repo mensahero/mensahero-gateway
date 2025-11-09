@@ -24,7 +24,7 @@ class HandleAppearance
 
         Inertia::share('theme', [
             'mode'    => $appearance->mode ?? 'system',
-            'primary' => $appearance->primary_color ?? 'green',
+            'primary' => $appearance->primary_color ?? 'brand-red',
             'neutral' => $appearance->secondary_color ?? 'slate',
         ]);
 
