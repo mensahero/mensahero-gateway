@@ -25,9 +25,7 @@ const items = computed<NavigationMenuItem[]>(() => [{
         <UHeader mode="drawer" class="border-b border-gray-200 bg-white/95 backdrop-blur-md dark:border-gray-800 dark:bg-gray-900/95 sticky top-0 z-50">
             <template #title>
                 <div class="flex items-center gap-2 sm:gap-3">
-                    <div class="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-gradient-to-br from-red-600 to-red-700">
-                        <span class="text-base sm:text-xl font-bold text-white">M</span>
-                    </div>
+                    <Logo class="h-8 w-8 sm:h-10 sm:w-10" />
                     <span class="text-lg sm:text-xl font-bold text-gray-900 dark:text-white">Mensahero</span>
                 </div>
             </template>
@@ -415,9 +413,7 @@ const items = computed<NavigationMenuItem[]>(() => [{
         <UFooter class="border-t border-gray-200 dark:border-gray-800">
             <template #left>
                 <div class="flex items-center gap-2 sm:gap-3">
-                    <div class="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-gradient-to-br from-red-600 to-red-700">
-                        <span class="text-xs sm:text-sm font-bold text-white">M</span>
-                    </div>
+                    <Logo class="h-6 w-6 sm:h-8 sm:w-8" />
                     <div>
                         <p class="text-xs sm:text-sm font-semibold text-gray-900 dark:text-white">Mensahero</p>
                         <p class="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
