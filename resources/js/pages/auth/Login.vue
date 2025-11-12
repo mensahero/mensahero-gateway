@@ -110,6 +110,11 @@ onMounted(() => {
         :submit="{ label: 'Login' }"
         @submit="onSubmit"
     >
+        <template #leading>
+            <div class="mb-4 flex justify-center">
+                <LogoWithName/>
+            </div>
+        </template>
         <template #footer v-if="props.canRegister">
             Don't have an account?
             <ULink :to="route('register', {}, false)" target="_self" class="font-medium text-primary">Sign up</ULink>.
