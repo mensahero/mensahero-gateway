@@ -1,4 +1,5 @@
 *
+!blacklist_file
 !private/
 !public/
 !.gitignore
