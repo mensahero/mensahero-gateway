@@ -85,24 +85,19 @@
             "@php -r \"! file_exists('.env') || copy('.env.example', '.env');\"",
             "@php artisan key:generate",
             "@php artisan migrate --force",
-            "npm install",
-            "npm run build"
+            "bun install",
+            "bun run build"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "npx concurrently \"composer mailpit\" \"php artisan queue:listen --tries=1\" \"php artisan schedule:work\" \"npm run dev\" --names=mailserver,queue,scheduler,vite --kill-others  -c auto"
-        ],
-        "dev:ssr": [
-            "npm run build:ssr",
-            "Composer\\Config::disableProcessTimeout",
-            "npx concurrently -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" \"php artisan serve\" \"php artisan queue:listen --tries=1\" \"php artisan pail --timeout=0\" \"php artisan inertia:start-ssr\" --names=server,queue,logs,ssr --kill-others"
+            "bunx concurrently \"composer mailpit\" \"php artisan queue:listen --tries=1\" \"php artisan schedule:work\" \"bun run dev\" --names=mailserver,queue,scheduler,vite --kill-others  -c auto"
         ],
         "format:be": [
             "vendor/bin/pint"
         ],
         "format:fe": [
-            "npm run format",
-            "npm run lint"
+            "bun run format",
+            "bun run lint"
         ],
         "format": [
             "@format:be",
@@ -128,12 +123,12 @@
         ],
         "playwright:install": [
             "echo Installing Playwright.",
-            "npm install playwright@latest",
-            "npx playwright install"
+            "bun install playwright@latest",
+            "bunx playwright install"
         ],
         "playwright:cleanup": [
             "echo Cleaning up Playwright.",
-            "npx playwright uninstall --all"
+            "bunx playwright uninstall --all"
         ],
 
         "test:browser": [
