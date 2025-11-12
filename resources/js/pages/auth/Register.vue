@@ -35,7 +35,7 @@ const onSubmit = () => {
             <!--  START:  Header Section        -->
             <div class="flex flex-col text-center">
                 <div class="mb-4 flex justify-center">
-                    <LogoWithName/>
+                    <LogoWithName />
                 </div>
 
                 <div class="text-xl font-semibold text-pretty text-highlighted">Create an account</div>

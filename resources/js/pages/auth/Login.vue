@@ -112,7 +112,7 @@ onMounted(() => {
     >
         <template #leading>
             <div class="mb-4 flex justify-center">
-                <LogoWithName/>
+                <LogoWithName />
             </div>
         </template>
         <template #footer v-if="props.canRegister">
