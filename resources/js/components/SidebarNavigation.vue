@@ -80,20 +80,6 @@ const sidebarNavigationItems = computed<NavigationMenuItem[][]>(() => [
             ],
         },
     ],
-    [
-        {
-            label: 'Feedback',
-            icon: 'i-lucide-message-circle',
-            to: 'https://github.com/marjose123/starter-kit/issues',
-            target: '_blank',
-        },
-        {
-            label: 'Github Repository',
-            icon: 'i-lucide-info',
-            to: 'https://github.com/marjose123/starter-kit',
-            target: '_blank',
-        },
-    ],
 ])
 
 watch(
