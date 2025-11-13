@@ -58,7 +58,7 @@ class LoginController extends Controller
 
     }
 
-    public function ssoCreate(Request $request, string $provider)
+    public function ssoCreate(Request $request, string $provider): RedirectResponse|\Symfony\Component\HttpFoundation\Response
     {
         if (! in_array($provider, ['google', 'zoho', 'zoom'])) {
             InertiaNotification::make()
@@ -73,7 +73,7 @@ class LoginController extends Controller
         return Inertia::location(Socialite::driver($provider)->redirect());
     }
 
-    public function ssoStore(Request $request, string $provider)
+    public function ssoStore(Request $request, string $provider): RedirectResponse
     {
         $ssoUser = Socialite::driver($provider)->user();
 
