@@ -19,7 +19,7 @@ class CreateUser
     public function handle(array $attributes): User
     {
         return DB::transaction(function () use ($attributes) {
-            $user = User::create([
+            $user = User::query()->create([
                 ...$attributes,
                 'name'     => Str::ucwords($attributes['name']),
                 'password' => (Hash::make($attributes['password'])),
