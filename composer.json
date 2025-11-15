@@ -36,6 +36,7 @@
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
         "mobiledetect/mobiledetectlib": "^4.8",
+        "propaganistas/laravel-phone": "^6.0",
         "scalar/laravel": "^0.2.0",
         "socialiteproviders/google": "^4.1",
         "socialiteproviders/zoho": "^4.1",

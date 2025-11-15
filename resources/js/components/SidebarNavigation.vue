@@ -41,6 +41,12 @@ const sidebarNavigationItems = computed<NavigationMenuItem[][]>(() => [
             to: route('dashboard', {}, false),
             target: '_self',
         },
+        {
+            label: 'Contacts',
+            icon: 'i-lucide:contact-round',
+            to: route('contacts.create', {}, false),
+            target: '_self',
+        },
     ],
 ])
 
