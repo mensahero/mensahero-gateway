@@ -24,7 +24,9 @@ const breadcrumbItems = ref([
 interface IContact extends IModelResourceData {
     id: string
     name: string
+    mobile: string
     country_code: string
+    source: string
     created: string
     updated: string
 }
@@ -96,6 +98,7 @@ const getRowItems = (row: Row<IContact>) => {
 const columnVisibility = ref({
     name: true,
     mobile: true,
+    id: false,
 })
 
 const columns: TableColumn<IContact>[] = [
@@ -143,6 +146,11 @@ const columns: TableColumn<IContact>[] = [
         header: 'Code',
         cell: ({ row }) =>
             h(UBadge, { class: 'capitalize', color: 'primary', variant: 'subtle' }, () => row.getValue('country_code')),
+    },
+    {
+        accessorKey: 'source',
+        header: 'Source',
+        cell: ({ row }) =>  h(UBadge, { class: 'capitalize', color: 'info', variant: 'subtle' }, () => row.getValue('source') ?? 'N/A'),
     },
     {
         id: 'actions',
@@ -217,14 +225,14 @@ const columns: TableColumn<IContact>[] = [
             </div>
             <div v-else>
                 <div class="flex w-full flex-1 flex-col">
-                    <div class="flex justify-end border-b border-accented px-4 py-3.5">
+                    <div class="flex justify-end px-4 py-3.5">
                         <UDropdownMenu
                             :items="
                                 table?.tableApi
                                     ?.getAllColumns()
                                     .filter((column) => column.getCanHide())
                                     .map((column) => ({
-                                        label: upperFirst(column.id),
+                                        label: upperFirst(column.columnDef.header as string),
                                         type: 'checkbox' as const,
                                         checked: column.getIsVisible(),
                                         onUpdateChecked(checked: boolean) {

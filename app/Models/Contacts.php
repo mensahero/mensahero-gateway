@@ -21,6 +21,7 @@ class Contacts extends Model
         'name',
         'mobile',
         'country_code',
+        'source',
     ];
 
     public function user(): BelongsTo
