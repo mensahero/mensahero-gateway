@@ -3,13 +3,29 @@
 namespace App\Models;
 
 use App\Concerns\MobileCountryCode;
+use App\Models\Filters\Contacts\MobileCountryCodeFilter;
+use App\Models\Filters\Contacts\SourceTypeFilter;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Lacodix\LaravelModelFilter\Traits\HasFilters;
+use Lacodix\LaravelModelFilter\Traits\IsSearchable;
 
 class Contacts extends Model
 {
+    use HasFilters;
     use HasUuids;
+    use IsSearchable;
+
+    protected array $searchable = [
+        'name',
+        'mobile',
+    ];
+
+    protected array $filters = [
+        SourceTypeFilter::class,
+        MobileCountryCodeFilter::class,
+    ];
 
     /**
      * The attributes that are mass assignable.

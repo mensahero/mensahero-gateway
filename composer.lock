@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b686b30d2bf1755d2ae530eefdaba3f7",
+    "content-hash": "dc2c3fd6abb12348d4f513f80553b71a",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -1713,6 +1713,93 @@
                 "source": "https://github.com/JayBizzle/Crawler-Detect/tree/v1.3.6"
             },
             "time": "2025-09-30T16:22:43+00:00"
+        },
+        {
+            "name": "lacodix/laravel-model-filter",
+            "version": "v3.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/lacodix/laravel-model-filter.git",
+                "reference": "23667e26ff59b6b0b233270d5aa46eed29234015"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/lacodix/laravel-model-filter/zipball/23667e26ff59b6b0b233270d5aa46eed29234015",
+                "reference": "23667e26ff59b6b0b233270d5aa46eed29234015",
+                "shasum": ""
+            },
+            "require": {
+                "ext-intl": "*",
+                "illuminate/contracts": "^10.0|^11.0|^12.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.13.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.13",
+                "illuminate/database": "^10.0|^11.0|^12.0",
+                "illuminate/support": "^10.0|^11.0|^12.0",
+                "larastan/larastan": "^2.0.1|^3.1",
+                "laravel/pint": "^1.0",
+                "laravel/prompts": "^0.1|^0.3",
+                "nunomaduro/collision": "^7.0|^8.0",
+                "nunomaduro/phpinsights": "^2.6",
+                "orchestra/testbench": "^8.0|^9.0|^10.0",
+                "pestphp/pest": "^2.21|^3.0",
+                "pestphp/pest-plugin-faker": "^2.0|^3.0",
+                "pestphp/pest-plugin-laravel": "^2.1|^3.0",
+                "phpstan/extension-installer": "^1.1|^1.4",
+                "phpstan/phpstan-deprecation-rules": "^1.0|^2.0",
+                "phpstan/phpstan-phpunit": "^1.0|^2.0",
+                "rector/rector": "^1.0|^2.0",
+                "spatie/pest-plugin-test-time": "^2.0|^2.2"
+            },
+            "type": "laravel-package",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Lacodix\\LaravelModelFilter\\LaravelModelFilterServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Lacodix\\LaravelModelFilter\\": "src",
+                    "Lacodix\\LaravelModelFilter\\Database\\Factories\\": "database/factories"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dominik Müller",
+                    "email": "dominik@lacodix.de",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A Laravel package to filter, search and sort models with ease while fetching from database.",
+            "homepage": "https://github.com/lacodix/laravel-model-filter",
+            "keywords": [
+                "eloquent",
+                "filter",
+                "filters",
+                "lacodix",
+                "laravel",
+                "model",
+                "search"
+            ],
+            "support": {
+                "issues": "https://github.com/lacodix/laravel-model-filter/issues",
+                "source": "https://github.com/lacodix/laravel-model-filter/tree/v3.6.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/lacodix",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-11-08T09:31:20+00:00"
         },
         {
             "name": "laravel/fortify",

@@ -14,8 +14,14 @@ class ContactsController extends Controller
 {
     public function create(): InertiaResponse
     {
+        $contacts = auth()->user()->contacts()
+            ->searchByQueryString()
+            ->filterByQueryString()
+            ->paginate(10)
+            ->withQueryString();
+
         return Inertia::render('Contacts', [
-            'contacts'      => Inertia::optional(fn () => ContactResource::collection(auth()->user()->contacts()->paginate(10))),
+            'contacts'      => Inertia::optional(fn () => ContactResource::collection($contacts)),
             'sourceTypes'   => ContactSources::cases(),
             'countryCodes'  => MobileCountryCode::cases(),
         ]);

@@ -38,8 +38,8 @@ interface IContactResource extends IModelResource {
 
 const props = defineProps<{
     contacts?: IContactResource
-    sourceTypes?: string[]
-    countryCodes?: string[]
+    sourceTypes: string[]
+    countryCodes: string[]
 }>()
 
 const toast = useToast()
@@ -53,6 +53,10 @@ const rowSelection = ref({ 1: true })
 const pagination = ref({
     pageIndex: 0,
     pageSize: 10,
+})
+const tableFilters = ref({
+    countryCode: 'all',
+    sourceType: 'all',
 })
 
 const UButton = resolveComponent('UButton')
@@ -269,13 +273,15 @@ const columns: TableColumn<IContact>[] = [
                                 <template #content>
                                     <div class="h-auto w-full p-5">
                                         <UForm class="space-y-3">
-                                            <UFormField label="Code" name="code" class="w-full">
+                                            <UFormField label="Code" name="countryCode" class="w-full">
                                                 <USelect
+                                                    v-model="tableFilters.countryCode"
                                                     :items="[
                                                         { label: 'All', value: 'all' },
-                                                        { label: 'Subscribed', value: 'subscribed' },
-                                                        { label: 'Unsubscribed', value: 'unsubscribed' },
-                                                        { label: 'Bounced', value: 'bounced' },
+                                                       ...props.countryCodes.map((code) => ({
+                                                           label: upperFirst(code),
+                                                            value: code,
+                                                           }))
                                                     ]"
                                                     :ui="{
                                                         trailingIcon:
@@ -285,13 +291,15 @@ const columns: TableColumn<IContact>[] = [
                                                     class="min-w-28"
                                                 />
                                             </UFormField>
-                                            <UFormField label="Code" name="code" class="w-full">
+                                            <UFormField label="Source" name="sourceType" class="w-full">
                                                 <USelect
+                                                    v-model="tableFilters.sourceType"
                                                     :items="[
                                                         { label: 'All', value: 'all' },
-                                                        { label: 'Subscribed', value: 'subscribed' },
-                                                        { label: 'Unsubscribed', value: 'unsubscribed' },
-                                                        { label: 'Bounced', value: 'bounced' },
+                                                        ...props.sourceTypes.map((source) => ({
+                                                           label: upperFirst(source),
+                                                            value: source,
+                                                           }))
                                                     ]"
                                                     :ui="{
                                                         trailingIcon:
