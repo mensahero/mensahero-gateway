@@ -78,7 +78,7 @@ onMounted(() => {
 watch(
     () => props.contacts,
     (newContacts) => (contactResources.value = newContacts),
-    { immediate: true, deep: true },
+    { deep: true },
 )
 
 watch(
@@ -99,7 +99,7 @@ watch(
             },
         )
     },
-    { deep: true, immediate: true },
+    { deep: true },
 )
 
 watch(
@@ -121,7 +121,7 @@ watch(
             },
         )
     },
-    { immediate: true, deep: true },
+    { deep: true },
 )
 
 watchDebounced(
