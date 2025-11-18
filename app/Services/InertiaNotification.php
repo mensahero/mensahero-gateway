@@ -50,6 +50,8 @@ final class InertiaNotification
         $this->type = InertiaNotificationType::Info;
         $this->icon = 'i-lucide-info';
         $this->color = 'info';
+
+        return $this;
     }
 
     public function warning(): self
@@ -57,6 +59,8 @@ final class InertiaNotification
         $this->type = InertiaNotificationType::Warning;
         $this->icon = 'i-lucide-alert-triangle';
         $this->color = 'warning';
+
+        return $this;
     }
 
     public function message(string $message): self
@@ -76,6 +80,8 @@ final class InertiaNotification
     public function type(InertiaNotificationType|string $type): self
     {
         $this->type = $type;
+
+        return $this;
     }
 
     /* @see https://ui.nuxt.com/docs/getting-started/integrations/icons/vue#icon-component */
