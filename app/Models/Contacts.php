@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Concerns\ContactSources;
 use App\Concerns\MobileCountryCode;
 use App\Models\Filters\Contacts\MobileCountryCodeFilter;
 use App\Models\Filters\Contacts\SourceTypeFilter;
@@ -52,6 +53,7 @@ class Contacts extends Model
     {
         return [
             'country_code' => MobileCountryCode::class,
+            'source'       => ContactSources::class,
         ];
     }
 }
