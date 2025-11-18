@@ -2,18 +2,25 @@
 
 namespace App\Http\Controllers\Modules;
 
+use App\Actions\Modules\Contacts\CreateContacts;
 use App\Concerns\ContactSources;
 use App\Concerns\MobileCountryCode;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Module\ContactsRequest;
 use App\Http\Resources\Module\ContactResource;
 use App\Models\Contacts;
+use App\Services\InertiaNotification;
+use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
+use Throwable;
 
 class ContactsController extends Controller
 {
+    public function __construct(private readonly CreateContacts $createContacts) {}
+
     public function create(Request $request): InertiaResponse
     {
         $perPage = $request->input('per_page', 10);
@@ -36,8 +43,24 @@ class ContactsController extends Controller
         ]);
     }
 
-    public function store(): RedirectResponse
+    /**
+     * @throws Exception
+     * @throws Throwable
+     */
+    public function store(ContactsRequest $request): RedirectResponse
     {
+
+        $this->createContacts->handle([
+            ...$request->validated(),
+            'user_id' => auth()->user()->id,
+        ]);
+
+        InertiaNotification::make()
+            ->success()
+            ->title('Contact created')
+            ->message('The contact has been created successfully.')
+            ->send();
+
         return to_route('contacts.create');
     }
 }
