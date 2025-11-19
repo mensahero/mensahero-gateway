@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Modules;
 
 use App\Actions\Modules\Contacts\CreateContacts;
+use App\Actions\Modules\Contacts\DeleteContacts;
 use App\Concerns\ContactSources;
 use App\Concerns\MobileCountryCode;
 use App\Http\Controllers\Controller;
@@ -19,7 +20,7 @@ use Throwable;
 
 class ContactsController extends Controller
 {
-    public function __construct(private readonly CreateContacts $createContacts) {}
+    public function __construct(private readonly CreateContacts $createContacts, private readonly DeleteContacts $deleteContacts) {}
 
     public function create(Request $request): InertiaResponse
     {
@@ -62,5 +63,26 @@ class ContactsController extends Controller
             ->send();
 
         return to_route('contacts.create');
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function destroy(Request $request): RedirectResponse
+    {
+
+        $request->validate([
+            'ids'   => ['required', 'array'],
+            'ids.*' => ['required', 'exists:contacts,id'],
+        ]);
+
+        $this->deleteContacts->handle($request->ids);
+
+        InertiaNotification::make()
+            ->success()
+            ->title('Contact deleted')
+            ->message('The contact has been deleted successfully.')
+            ->send();
+
     }
 }
