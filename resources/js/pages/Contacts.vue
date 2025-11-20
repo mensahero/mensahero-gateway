@@ -2,13 +2,14 @@
 import AddContact from '@/components/AddContact.vue'
 import DeleteModal from '@/components/DeleteModal.vue'
 import Layout from '@/layouts/default.vue'
-import { IModelResource, IModelResourceData } from '@/types/modelResource'
+import { contactColumns } from '@/tables/columns/contacts'
+import { IContact } from '@/types/contacts/contacts'
+import { IModelResource } from '@/types/modelResource'
 import { Head, router, useForm } from '@inertiajs/vue3'
-import type { TableColumn } from '@nuxt/ui'
-import { getPaginationRowModel, type Row } from '@tanstack/table-core'
-import { useClipboard, watchDebounced } from '@vueuse/core'
+import { getPaginationRowModel } from '@tanstack/table-core'
+import { watchDebounced } from '@vueuse/core'
 import { upperFirst } from 'scule'
-import { h, onMounted, ref, resolveComponent, useTemplateRef, watch } from 'vue'
+import { onMounted, ref, resolveComponent, useTemplateRef, watch } from 'vue'
 import { route } from 'ziggy-js'
 
 defineOptions({ layout: Layout })
@@ -24,16 +25,6 @@ const breadcrumbItems = ref([
     },
 ])
 
-interface IContact extends IModelResourceData {
-    id: string
-    name: string
-    mobile: string
-    country_code: string
-    source: string
-    created: string
-    updated: string
-}
-
 interface IContactResource extends IModelResource {
     data: IContact[]
 }
@@ -45,18 +36,16 @@ const props = defineProps<{
     countryCodes: string[]
 }>()
 
-const toast = useToast()
 const overlay = useOverlay()
 const pageLoading = ref(true)
 const contactResources = ref<undefined | IContactResource>(props.contacts)
-const { copy } = useClipboard()
 const table = useTemplateRef('table')
 const addContactActionModal = overlay.create(AddContact)
 const deleteActionModal = overlay.create(DeleteModal)
 const rowSelection = ref({})
 const pagination = ref({
     pageIndex: 0,
-    pageSize: 10,
+    pageSize: 25,
 })
 const tableSearch = ref('')
 const tableFilters = ref({
@@ -64,11 +53,14 @@ const tableFilters = ref({
     sourceType: 'all',
 })
 
+const columnVisibility = ref({
+    name: true,
+    mobile: true,
+    id: false,
+})
+
 const UButton = resolveComponent('UButton')
-const UCheckbox = resolveComponent('UCheckbox')
-const UBadge = resolveComponent('UBadge')
 const UDropdownMenu = resolveComponent('UDropdownMenu')
-const UAvatar = resolveComponent('UAvatar')
 
 onMounted(() => {
     router.reload({
@@ -148,124 +140,6 @@ watchDebounced(
         maxWait: 5000,
     },
 )
-
-const getRowItems = (row: Row<IContact>) => {
-    return [
-        {
-            type: 'label',
-            label: 'Actions',
-        },
-        {
-            label: 'Copy Mobile',
-            onSelect() {
-                copy(row.original.mobile)
-
-                toast.add({
-                    title: 'Mobile copied to clipboard!',
-                    color: 'success',
-                    icon: 'i-lucide-circle-check',
-                })
-            },
-        },
-        {
-            label: 'Send SMS',
-        },
-        {
-            type: 'separator',
-        },
-        {
-            label: 'Delete Contact',
-        },
-    ]
-}
-
-const columnVisibility = ref({
-    name: true,
-    mobile: true,
-    id: false,
-})
-
-const columns: TableColumn<IContact>[] = [
-    {
-        id: 'select',
-        enableHiding: false,
-        header: ({ table }) =>
-            h(UCheckbox, {
-                modelValue: table.getIsSomePageRowsSelected() ? 'indeterminate' : table.getIsAllPageRowsSelected(),
-                'onUpdate:modelValue': (value: boolean | 'indeterminate') => table.toggleAllPageRowsSelected(!!value),
-                'aria-label': 'Select all',
-            }),
-        cell: ({ row }) =>
-            h(UCheckbox, {
-                modelValue: row.getIsSelected(),
-                'onUpdate:modelValue': (value: boolean | 'indeterminate') => row.toggleSelected(!!value),
-                'aria-label': 'Select row',
-            }),
-    },
-    {
-        accessorKey: 'id',
-        header: 'ID',
-    },
-    {
-        accessorKey: 'name',
-        header: 'Name',
-        enableHiding: false,
-        cell: ({ row }) => {
-            return h('div', { class: 'flex items-center gap-3' }, [
-                h(UAvatar, {
-                    alt: row.original.name,
-                    size: 'lg',
-                }),
-                h('div', undefined, [h('p', { class: 'font-medium text-highlighted' }, row.original.name)]),
-            ])
-        },
-    },
-    {
-        accessorKey: 'mobile',
-        header: 'Mobile',
-        enableHiding: false,
-    },
-    {
-        accessorKey: 'country_code',
-        header: 'Code',
-        cell: ({ row }) =>
-            h(UBadge, { class: 'capitalize', color: 'primary', variant: 'subtle' }, () => row.getValue('country_code')),
-    },
-    {
-        accessorKey: 'source',
-        header: 'Source',
-        cell: ({ row }) =>
-            h(UBadge, { class: 'capitalize', color: 'info', variant: 'subtle' }, () => row.getValue('source') ?? 'N/A'),
-    },
-    {
-        id: 'actions',
-        enableHiding: false,
-        cell: ({ row }) => {
-            return h(
-                'div',
-                { class: 'text-right' },
-                h(
-                    UDropdownMenu,
-                    {
-                        content: {
-                            align: 'end',
-                        },
-                        items: getRowItems(row),
-                        'aria-label': 'Actions dropdown',
-                    },
-                    () =>
-                        h(UButton, {
-                            icon: 'i-lucide-ellipsis-vertical',
-                            color: 'neutral',
-                            variant: 'ghost',
-                            class: 'ml-auto',
-                            'aria-label': 'Actions dropdown',
-                        }),
-                ),
-            )
-        },
-    },
-]
 </script>
 
 <template>
@@ -467,7 +341,7 @@ const columns: TableColumn<IContact>[] = [
                             getPaginationRowModel: getPaginationRowModel(),
                         }"
                         :data="contactResources?.data"
-                        :columns="columns"
+                        :columns="contactColumns"
                         :ui="{
                             base: 'table-fixed border-separate border-spacing-0',
                             thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
@@ -494,10 +368,10 @@ const columns: TableColumn<IContact>[] = [
 
                         <div class="flex items-center gap-1.5">
                             <span class="text-sm text-muted">Record per page:</span>
-                            <USelect v-model="pagination.pageSize" :items="[10, 25, 50, 100]" />
+                            <USelect v-model="pagination.pageSize" :items="[5, 10, 25, 50, 100]" />
                             <UPagination
                                 :default-page="(table?.tableApi?.getState().pagination.pageIndex || 0) + 1"
-                                :items-per-page="pagination.pageSize || 10"
+                                :items-per-page="pagination.pageSize || 25"
                                 :total="contactResources?.meta.total || 0"
                                 @update:page="(p: number) => table?.tableApi?.setPageIndex(p - 1)"
                             />
