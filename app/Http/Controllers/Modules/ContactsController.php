@@ -14,8 +14,10 @@ use App\Services\InertiaNotification;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response as InertiaResponse;
+use Propaganistas\LaravelPhone\PhoneNumber;
 use Throwable;
 
 class ContactsController extends Controller
@@ -24,10 +26,10 @@ class ContactsController extends Controller
 
     public function create(Request $request): InertiaResponse
     {
-        $perPage = $request->input('per_page', 10);
+        $perPage = $request->input('per_page', 25);
 
-        if (! in_array($perPage, [10, 25, 50, 100])) {
-            $perPage = 10;
+        if (! in_array($perPage, [5, 10, 25, 50, 100])) {
+            $perPage = 25;
         }
 
         $contacts = Contacts::query()
@@ -51,8 +53,17 @@ class ContactsController extends Controller
     public function store(ContactsRequest $request): RedirectResponse
     {
 
+        $formattedMobile = new PhoneNumber($request->mobile, "{$request->country_code}")->formatE164();
+
+        if (Contacts::query()->where('mobile', $formattedMobile)->exists()) {
+            throw ValidationException::withMessages([
+                'mobile' => 'The mobile number has already been taken.',
+            ]);
+        }
+
         $this->createContacts->handle([
             ...$request->validated(),
+            'mobile'  => $formattedMobile,
             'user_id' => auth()->user()->id,
         ]);
 
