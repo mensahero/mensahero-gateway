@@ -58,7 +58,7 @@ const closeModal = () => {
                         <UInput v-model="form.name" placeholder="Enter your name" class="w-full" autofocus />
                     </UFormField>
                     <UFormField label="Code" name="country_code" :error="form.errors.country_code" required>
-                        <USelect
+                        <USelectMenu
                             v-model="form.country_code"
                             placeholder="Select your code"
                             :items="countryCodes || []"
@@ -71,7 +71,7 @@ const closeModal = () => {
                         <UInput v-model="form.mobile" placeholder="Enter your mobile number" class="w-full" />
                     </UFormField>
                     <UFormField label="Source" name="source" :error="form.errors.source">
-                        <USelect
+                        <USelectMenu
                             v-model="form.source"
                             placeholder="Select source"
                             :items="source || []"
