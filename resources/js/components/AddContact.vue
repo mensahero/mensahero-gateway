@@ -55,10 +55,17 @@ const closeModal = () => {
             <UForm class="flex w-full flex-row gap-3 space-y-2" @submit.prevent="onSubmit">
                 <div class="w-6/12 space-y-2">
                     <UFormField label="Name" name="name" :error="form.errors.name" required>
-                        <UInput v-model="form.name" placeholder="Enter your name" class="w-full" autofocus />
+                        <UInput
+                            tabindex="1"
+                            v-model="form.name"
+                            placeholder="Enter your name"
+                            class="w-full"
+                            autofocus
+                        />
                     </UFormField>
                     <UFormField label="Code" name="country_code" :error="form.errors.country_code" required>
                         <USelectMenu
+                            tabindex="3"
                             v-model="form.country_code"
                             placeholder="Select your code"
                             :items="countryCodes || []"
@@ -68,11 +75,17 @@ const closeModal = () => {
                 </div>
                 <div class="w-6/12 space-y-2">
                     <UFormField label="Mobile Number" name="mobile" :error="form.errors.mobile" required>
-                        <UInput v-model="form.mobile" placeholder="Enter your mobile number" class="w-full" />
+                        <UInput
+                            tabindex="2"
+                            v-model="form.mobile"
+                            placeholder="Enter your mobile number"
+                            class="w-full"
+                        />
                     </UFormField>
                     <UFormField label="Source" name="source" :error="form.errors.source">
                         <USelectMenu
                             v-model="form.source"
+                            tabindex="4"
                             placeholder="Select source"
                             :items="source || []"
                             class="w-full"

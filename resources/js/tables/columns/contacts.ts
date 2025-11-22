@@ -74,7 +74,7 @@ export const contactColumns: TableColumn<IContact>[] = [
                             align: 'end',
                         },
                         items: contactRows(row),
-                        'aria-label': 'Actions dropdown',
+                        'aria-label': 'Table rows actions dropdown menu',
                     },
                     () =>
                         h(UButton, {
@@ -82,6 +82,7 @@ export const contactColumns: TableColumn<IContact>[] = [
                             color: 'neutral',
                             variant: 'ghost',
                             class: 'ml-auto',
+                            'data-test': 'contact-actions-dropdown-trigger',
                             'aria-label': 'Actions dropdown',
                         }),
                 ),

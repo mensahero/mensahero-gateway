@@ -139,7 +139,6 @@
         ],
 
         "test:browser": [
-            "Composer\\Config::disableProcessTimeout",
             "php artisan test --testsuite=Browser --bail"
         ],
 
@@ -153,9 +152,10 @@
 
         "test": [
             "@php artisan config:clear --ansi",
-            "@test:browser",
+            "@test:api",
             "@test:features",
-            "@test:Api"
+            "@test:browser"
+
         ]
     },
     "scripts-descriptions": {
