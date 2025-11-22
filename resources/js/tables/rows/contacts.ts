@@ -30,9 +30,6 @@ export const contactRows = (row: Row<IContact>) => {
             },
         },
         {
-            label: 'Send SMS',
-        },
-        {
             type: 'separator',
         },
         {
