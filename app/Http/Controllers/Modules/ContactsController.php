@@ -39,7 +39,7 @@ class ContactsController extends Controller
             ->withQueryString();
 
         return Inertia::render('Contacts', [
-            'contacts'      => Inertia::optional(fn () => ContactResource::collection($contacts)),
+            'contacts'      => ContactResource::collection($contacts),
             'contactsCount' => Contacts::query()->count(),
             'sourceTypes'   => ContactSources::cases(),
             'countryCodes'  => MobileCountryCode::cases(),
