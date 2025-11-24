@@ -52,6 +52,14 @@ class Contacts extends Model
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * @return BelongsTo<Team, $this>
+     */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'team_id', 'id');
+    }
+
     public function casts(): array
     {
         return [

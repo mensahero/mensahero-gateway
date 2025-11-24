@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('contacts', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->foreignId('user_id')->constrained('users');
+            $table->foreignUuid('team_id')->constrained('teams')->cascadeOnDelete();
             $table->string('name');
             $table->string('mobile')->index();
             $table->string('country_code')->default('PH');
