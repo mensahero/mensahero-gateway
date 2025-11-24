@@ -6,6 +6,15 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Jurager\Teams\Models\Team as BaseTeam;
 
+/**
+ *  App\Models\Team
+ *
+ * @property Contacts $contactsByTeam
+ * @property bool     $default
+ * @property string   $name
+ * @property string   $user_id
+ * @property string   $id
+ */
 class Team extends BaseTeam
 {
     use HasUuids;
@@ -14,7 +23,7 @@ class Team extends BaseTeam
 
     public function isDefault(): bool
     {
-        $this->default;
+        return $this->default;
     }
 
     /**

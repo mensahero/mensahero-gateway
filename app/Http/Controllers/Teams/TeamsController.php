@@ -11,7 +11,7 @@ use Illuminate\Validation\ValidationException;
 
 class TeamsController extends Controller
 {
-    public function getTeams()
+    public function getTeams(): JsonResponse
     {
         $user = auth()->user();
 

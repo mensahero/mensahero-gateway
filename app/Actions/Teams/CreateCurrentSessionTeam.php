@@ -6,6 +6,11 @@ use App\Models\Team;
 
 class CreateCurrentSessionTeam
 {
+    /**
+     * @param Team $team
+     *
+     * @return void
+     */
     public function handle(Team $team): void
     {
         session()->put('current_team_id', $team->id);

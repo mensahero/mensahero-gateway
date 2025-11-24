@@ -18,6 +18,7 @@ use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
+use Inertia\Response;
 use Jurager\Teams\Support\Facades\Teams as TeamsFacade;
 
 class InviteController extends Controller
@@ -61,20 +62,20 @@ class InviteController extends Controller
         return to_route('dashboard');
     }
 
-    public function createUser(Request $request, string $id)
+    public function createUser(Request $request, string $id): Response
     {
         // Get the invitation model
         /** @var Invitation $invitation */
         $invitation = TeamsFacade::instance('invitation')->whereKey($id)->firstOrFail();
 
-        Inertia::render('', [
+        return Inertia::render('', [
             'email'        => $invitation->email,
             'invitationId' => $invitation->id,
         ]);
 
     }
 
-    public function store(RegisterRequest $request, string $id)
+    public function store(RegisterRequest $request, string $id): RedirectResponse
     {
         // Get the invitation model
         /** @var Invitation $invitation */
