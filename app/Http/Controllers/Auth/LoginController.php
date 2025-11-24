@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Actions\Auth\LoginUser;
+use App\Actions\Teams\CreateCurrentSessionTeam;
 use App\Actions\User\CreateUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
@@ -53,6 +54,9 @@ class LoginController extends Controller
         Auth::login($user, $request->boolean('remember'));
 
         $request->session()->regenerate();
+
+        $userDefaultTeam = $user->allTeams()->where('default', true)->first();
+        app(CreateCurrentSessionTeam::class)->handle($userDefaultTeam);
 
         return redirect()->intended(route('dashboard', absolute: false));
 

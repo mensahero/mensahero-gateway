@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 use Override;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +14,15 @@ class AppServiceProvider extends ServiceProvider
     #[Override]
     public function register(): void
     {
-        //
+
+        Str::macro('possessive', function (string $string): ?string {
+            if (empty($string)) {
+                return null;
+            }
+
+            return Str::endsWith($string, 's') ? $string."'" : $string."'s";
+        });
+
     }
 
     /**
