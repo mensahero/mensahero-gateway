@@ -10,6 +10,14 @@ Route::get(config('teams.invitations.routes.url'), [InviteController::class, 'in
     ])
     ->name('teams.invitations.accept');
 
+Route::get('teams/user/invitation/{id}', [InviteController::class, 'createUser'])
+    ->middleware(['signed', 'guest'])
+    ->name('teams.invitations.create.user');
+
+Route::post('teams/user/invitation/{id}', [InviteController::class, 'store'])
+    ->middleware(['guest'])
+    ->name('teams.invitations.store.user');
+
 Route::middleware('auth')->prefix('teams')->group(function () {
 
     Route::get('/getAllTeams', [TeamsController::class, 'getTeams'])
