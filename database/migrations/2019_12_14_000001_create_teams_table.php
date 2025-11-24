@@ -15,6 +15,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->foreignId('user_id')->index();
             $table->string('name')->unique();
+            $table->boolean('default')->default(false)->index();
             $table->timestamps();
         });
     }
