@@ -135,10 +135,7 @@ watch(
         :ui="{ footer: 'lg:border-t lg:border-default' }"
     >
         <template #header="{ collapsed }">
-            <div v-if="!collapsed" class="flex w-full flex-row items-center justify-center">
-                <LogoWithName class="h-10 w-auto shrink-0" />
-            </div>
-            <Logo v-else class="h-8 w-auto shrink-0 justify-center" />
+            <TeamsMenu :collapsed="collapsed" />
         </template>
 
         <template #default="{ collapsed }">
