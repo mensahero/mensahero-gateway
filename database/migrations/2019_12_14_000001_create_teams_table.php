@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create(Config::get('teams.tables.teams', 'teams'), static function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->foreignId('user_id')->index();
-            $table->string('name');
+            $table->string('name')->unique();
             $table->timestamps();
         });
     }

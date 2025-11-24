@@ -1,13 +1,13 @@
 <?php
 
+use App\Models\Ability;
+use App\Models\Group;
+use App\Models\Invitation;
+use App\Models\Membership;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\Team;
 use App\Models\User;
-use Jurager\Teams\Models\Ability;
-use Jurager\Teams\Models\Group;
-use Jurager\Teams\Models\Invitation;
-use Jurager\Teams\Models\Membership;
-use Jurager\Teams\Models\Permission;
-use Jurager\Teams\Models\Role;
-use Jurager\Teams\Models\Team;
 
 return [
 

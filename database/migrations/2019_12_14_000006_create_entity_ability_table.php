@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('entity_ability', static function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('ability_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('ability_id')->constrained()->cascadeOnDelete();
             $table->morphs('entity');
             $table->boolean('forbidden');
             $table->timestamps();

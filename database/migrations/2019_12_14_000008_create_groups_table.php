@@ -13,8 +13,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('groups', static function (Blueprint $table) {
-            $table->id();
-            $table->foreignId(Config::get('teams.foreign_keys.team_id', 'team_id'))->nullable()->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid(Config::get('teams.foreign_keys.team_id', 'team_id'))->nullable()->constrained()->cascadeOnDelete();
             $table->string('code');
             $table->string('name');
             $table->timestamps();

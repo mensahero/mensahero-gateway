@@ -13,9 +13,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('invitations', static function (Blueprint $table) {
-            $table->id();
-            $table->foreignId(Config::get('teams.foreign_keys.team_id', 'team_id'))->constrained()->cascadeOnDelete();
-            $table->foreignId('role_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid(Config::get('teams.foreign_keys.team_id', 'team_id'))->constrained()->cascadeOnDelete();
+            $table->foreignUuid('role_id')->constrained()->cascadeOnDelete();
             $table->string('email');
             $table->timestamps();
 

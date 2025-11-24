@@ -13,8 +13,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('roles', static function (Blueprint $table) {
-            $table->id();
-            $table->foreignId(Config::get('teams.foreign_keys.team_id', 'team_id'))->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid(Config::get('teams.foreign_keys.team_id', 'team_id'))->constrained()->cascadeOnDelete();
             $table->string('code');
             $table->string('name')->nullable();
             $table->string('description')->nullable();

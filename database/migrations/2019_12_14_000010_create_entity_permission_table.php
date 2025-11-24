@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('entity_permission', static function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->morphs('entity');
-            $table->foreignId('permission_id')->constrained()->cascadeOnDelete();
+            $table->foreignUuid('permission_id')->constrained()->cascadeOnDelete();
         });
     }
 
