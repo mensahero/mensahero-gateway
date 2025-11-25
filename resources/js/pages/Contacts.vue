@@ -157,6 +157,9 @@ watchDebounced(
         maxWait: 5000,
     },
 )
+
+// if the user changes the teams, we need to refresh the user context and its contacts list
+emitter.on('teams:switch', () => reloadInertiaPage())
 </script>
 
 <template>

@@ -18,6 +18,6 @@ class UserContactsScope implements Scope
      */
     public function apply(Builder $builder, Model $model)
     {
-        $builder->where('user_id', auth()->user()->id);
+        $builder->where('team_id', session('current_team_id'));
     }
 }

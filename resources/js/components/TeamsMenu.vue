@@ -1,0 +1,107 @@
+<script setup lang="ts">
+import emitter from '@/lib/emitter'
+import apiFetch from '@/lib/ofetch'
+import type { DropdownMenuItem } from '@nuxt/ui'
+import { computed, onBeforeMount, ref } from 'vue'
+
+defineProps<{
+    collapsed?: boolean
+}>()
+
+interface ITeams {
+    id: string
+    label: string
+    current_team: boolean
+    default: boolean
+}
+
+interface ITeamsMenu {
+    id: string
+    label: string
+    avatar: {
+        src: string | undefined
+        alt: string
+    }
+    default: boolean
+    current_team: boolean
+    onSelect?: () => void
+}
+
+const teams = ref<ITeamsMenu[]>([])
+const selectedTeam = ref<ITeamsMenu>()
+
+const items = computed<DropdownMenuItem[][]>(() => {
+    return [
+        teams.value.map((team) => ({
+            ...team,
+            onSelect() {
+                selectedTeam.value = team
+                apiFetch(route('teams.switchTeam'), {
+                    method: 'POST',
+                    body: {
+                        team: team.id,
+                    },
+                }).then(() => emitter.emit('teams:switch', team.id))
+            },
+        })),
+        [
+            {
+                label: 'Create team',
+                icon: 'i-lucide-circle-plus',
+            },
+            {
+                label: 'Manage teams',
+                icon: 'i-lucide-cog',
+            },
+        ],
+    ]
+})
+
+onBeforeMount(async () => {
+    const teamsResp = await apiFetch<ITeams[]>(route('teams.getTeamMenu'))
+    teams.value = teamsResp.map((team: ITeams) => {
+        return {
+            ...team,
+            avatar: {
+                src: undefined,
+                alt: team.label,
+            },
+        }
+    })
+    teams.value.forEach((team) => {
+        if (team.current_team) {
+            selectedTeam.value = team
+        }
+    })
+
+    console.log(teams.value)
+    console.log(selectedTeam.value)
+})
+</script>
+
+<template>
+    <UDropdownMenu
+        :items="items"
+        :content="{ align: 'center', collisionPadding: 12 }"
+        :ui="{ content: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)' }"
+    >
+        <UButton
+            v-bind="{
+                ...selectedTeam,
+                label: collapsed ? undefined : selectedTeam?.label,
+                trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
+            }"
+            color="neutral"
+            variant="ghost"
+            block
+            :square="collapsed"
+            class="data-[state=open]:bg-elevated"
+            :class="[!collapsed && 'py-2']"
+            :ui="{
+                trailingIcon: 'text-dimmed',
+            }"
+        />
+    </UDropdownMenu>
+</template>
+
+<style scoped></style>

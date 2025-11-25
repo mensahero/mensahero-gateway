@@ -38,6 +38,7 @@ class Contacts extends Model
      */
     protected $fillable = [
         'user_id',
+        'team_id',
         'name',
         'mobile',
         'country_code',

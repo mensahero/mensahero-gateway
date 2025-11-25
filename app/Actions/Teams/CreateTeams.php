@@ -4,6 +4,7 @@ namespace App\Actions\Teams;
 
 use App\Models\Team;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 use Throwable;
 
 class CreateTeams
@@ -20,6 +21,7 @@ class CreateTeams
     {
         return DB::transaction(fn () => Team::query()->create([
             ...$attribute,
+            'name'    => Str::of($attribute['name'])->trim()->endsWith('Team') ? ucwords((string) $attribute['name']) : ucwords((string) $attribute['name']).' Team',
             'default' => $markAsDefault,
         ]));
     }

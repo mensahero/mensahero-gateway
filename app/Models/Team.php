@@ -33,4 +33,11 @@ class Team extends BaseTeam
     {
         return $this->belongsTo(Contacts::class, 'team_id', 'id');
     }
+
+    protected function casts(): array
+    {
+        return [
+            'default' => 'boolean',
+        ];
+    }
 }

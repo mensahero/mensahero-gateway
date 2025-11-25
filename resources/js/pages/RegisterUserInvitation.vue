@@ -45,7 +45,9 @@ const onSubmit = () => {
                 </div>
 
                 <div class="text-xl font-semibold text-pretty text-highlighted">Create an account</div>
-                <div class="mt-1 text-base text-pretty text-muted">Enter your details below to create your account and be able to accept the invitation.</div>
+                <div class="mt-1 text-base text-pretty text-muted">
+                    Enter your details below to create your account and be able to accept the invitation.
+                </div>
             </div>
             <!--   END: Header Section        -->
 

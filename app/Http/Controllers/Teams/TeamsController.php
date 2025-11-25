@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Teams;
 
 use App\Actions\Teams\RetrieveCurrentSessionTeam;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Teams\TeamsMenuResource;
+use App\Models\Team;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,6 +24,15 @@ class TeamsController extends Controller
         ]);
     }
 
+    public function getTeamMenus(): JsonResponse
+    {
+        $user = auth()->user();
+
+        $teams = $user->allTeams();
+
+        return response()->json(TeamsMenuResource::collection($teams));
+    }
+
     /**
      * @throws Exception
      */
@@ -38,15 +49,14 @@ class TeamsController extends Controller
             'team' => ['required', 'exists:teams,id'],
         ]);
 
-        $user = $request->user();
-        $team = $user->teams()->findOrFail($request->team)->first();
+        $team = Team::query()->findOrFail($request->team);
         if (! $team) {
             ValidationException::withMessages([
                 'team' => 'The team does not exist',
             ]);
         }
 
-        $user->switchTeam($team);
+        $request->user()->switchTeam($team);
 
         return response()->json([
             'message' => 'Team switched successfully',

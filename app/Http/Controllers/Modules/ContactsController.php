@@ -66,6 +66,7 @@ class ContactsController extends Controller
             ...$request->validated(),
             'mobile'  => $formattedMobile,
             'user_id' => auth()->user()->id,
+            'team_id' => session('current_team_id'),
         ]);
 
         InertiaNotification::make()
