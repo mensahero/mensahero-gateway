@@ -24,17 +24,40 @@ interface ITeams extends ITeam {
 }
 
 interface IRolesPermission {
-    name: string
-    value: string
+    uuid: string
+    label: string
     description: string
+}
+
+export interface IMembers {
+    invited: {
+        data: {
+            id: string
+            email: string
+            role_id: string
+            created_at: string
+        }[]
+    }
+    members: {
+        data: {
+            id: number
+            name: string
+            email: string
+            email_verified_at: string
+            created_at: string
+            updated_at: string
+            [k: string]: unknown
+        }[]
+    }
 }
 
 const props = defineProps<{
     team: ITeams
     roles_permissions: IRolesPermission[]
+    members: IMembers
 }>()
 
-console.log(props.roles_permissions)
+console.log(props.members)
 
 const formTeamInfo = useForm({
     name: props.team.name,
@@ -66,6 +89,7 @@ const inviteMemberSubmit = () => {
     inviteMember.clearErrors()
     inviteMember.post(route('teams.manage.invite'), {
         onSuccess: () => {
+            inviteMember.resetAndClearErrors()
             reloadProps()
         },
         preserveScroll: true,
@@ -134,7 +158,7 @@ const inviteMemberSubmit = () => {
                         class="w-full"
                         color="primary"
                         variant="table"
-                        value-key="id"
+                        value-key="uuid"
                         :items="roleOptions"
                     />
                 </UFormField>

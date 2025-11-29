@@ -10,6 +10,8 @@ use App\Actions\User\CreateUser;
 use App\Concerns\RolesPermissions;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use App\Http\Resources\Auth\UserResource;
+use App\Http\Resources\Teams\InvitationMemberResource;
 use App\Http\Resources\Teams\TeamResource;
 use App\Http\Resources\Teams\TeamsMenuResource;
 use App\Mail\Team\TeamInvitationMail;
@@ -42,11 +44,11 @@ class TeamsController extends Controller
         return Inertia::render('Teams', [
             'team'                => TeamResource::make($teamWithOwner),
             'members'             => [
-                'invited' => [],
-                'members' => [],
+                'invited' => InvitationMemberResource::collection($team->teamInvitations),
+                'members' => UserResource::collection($team->allUsers()),
             ],
             'roles_permissions'   => collect($team->role)->map(fn ($role) => [
-                'id'          => RolesPermissions::tryFrom($role->name)->id(),
+                'uuid'        => $role->id,
                 'label'       => RolesPermissions::tryFrom($role->name)->label(),
                 'description' => RolesPermissions::tryFrom($role->name)->description(),
             ]),
@@ -57,6 +59,8 @@ class TeamsController extends Controller
      *  Invite a user via email.
      *
      * @param Request $request
+     *
+     * @throws Exception
      *
      * @return void
      */
