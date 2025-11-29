@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import Layout from '@/layouts/default.vue'
+import { columns } from '@/tables/columns/teams'
 import { ITeam } from '@/types/teams'
 import { User } from '@/types/user'
 import { Head, router, useForm } from '@inertiajs/vue3'
@@ -51,13 +52,40 @@ export interface IMembers {
     }
 }
 
+export type TMembersTable = {
+    id: string | number
+    name: string
+    email: string
+    created_at: string
+    role: IRolesPermission['label'] | 'N/A'
+    status: 'Member' | 'Invited'
+}
+
 const props = defineProps<{
     team: ITeams
     roles_permissions: IRolesPermission[]
     members: IMembers
 }>()
 
-console.log(props.members)
+const roleOptions = ref<RadioGroupItem[]>(props.roles_permissions)
+const membersData = ref<TMembersTable[]>(
+    props.members.members.data.map((member) => ({
+        ...member,
+        status: 'Member',
+        role: props.roles_permissions.find((role) => role.uuid === member.role_id)?.label ?? 'N/A',
+    })),
+)
+const membersInvitedData = ref<TMembersTable[]>(
+    props.members.invited.data.map((inviteMember) => ({
+        ...inviteMember,
+        status: 'Invited',
+        role: props.roles_permissions.find((role) => role.uuid === inviteMember.role_id)?.label ?? 'N/A',
+        name: '',
+    })),
+)
+const mergeMembersTableData = ref<TMembersTable[]>(membersData.value.concat(membersInvitedData.value))
+
+console.log(mergeMembersTableData)
 
 const formTeamInfo = useForm({
     name: props.team.name,
@@ -77,8 +105,6 @@ const reloadProps = () => {
         only: ['teams', 'roles_permissions'],
     })
 }
-
-const roleOptions = ref<RadioGroupItem[]>(props.roles_permissions)
 
 const inviteMember = useForm({
     email: '',
@@ -109,7 +135,6 @@ const inviteMemberSubmit = () => {
                 description="The team's name and owner information."
                 id="team-info-section"
             />
-            <USeparator class="w-10/12" />
             <!--   END: Header Section        -->
 
             <UForm class="w-5/12 space-y-6 pb-15" @submit.prevent="teamInfoSubmit">
@@ -137,6 +162,8 @@ const inviteMemberSubmit = () => {
                 />
             </UForm>
 
+            <USeparator class="w-10/12" />
+
             <!--  Add Team Member Section     -->
 
             <!--  START:  Header Section        -->
@@ -145,7 +172,6 @@ const inviteMemberSubmit = () => {
                 description="Add a new team member to your team, allowing them to collaborate with you."
                 id="add-team-member-section"
             />
-            <USeparator class="w-10/12" />
             <!--   END: Header Section        -->
 
             <UForm class="w-5/12 space-y-6 pb-15" @submit.prevent="inviteMemberSubmit">
@@ -169,6 +195,8 @@ const inviteMemberSubmit = () => {
                 />
             </UForm>
 
+            <USeparator class="w-10/12" />
+
             <!--  Team Member Section     -->
 
             <!--  START:  Header Section        -->
@@ -177,8 +205,19 @@ const inviteMemberSubmit = () => {
                 description="All of the users that are part of this team."
                 id="team-member-section"
             />
-            <USeparator class="w-10/12" />
             <!--   END: Header Section        -->
+            <UTable
+                class="w-10/12 shrink-0"
+                :ui="{
+                    base: 'table-fixed border-separate border-spacing-0',
+                    thead: '[&>tr]:bg-elevated/50 [&>tr]:after:content-none',
+                    tbody: '[&>tr]:last:[&>td]:border-b-0',
+                    th: 'py-2 first:rounded-l-lg last:rounded-r-lg border-y border-default first:border-l last:border-r',
+                    td: 'border-b border-default',
+                }"
+                :data="mergeMembersTableData"
+                :columns="columns"
+            />
         </div>
     </AppLayout>
 </template>
