@@ -10,12 +10,13 @@ on:
       - 'phpstan.neon.dist'
       - '.github/workflows/phpstan.yml'
   pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
     branches:
-      - develop
-      - main
+      - '**'
 
 jobs:
   phpstan:
+    if: github.event.pull_request.draft == false && github.base_ref != 'main'
     name: phpstan
     runs-on: ubuntu-latest
     timeout-minutes: 5

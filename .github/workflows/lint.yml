@@ -6,15 +6,16 @@ on:
       - develop
       - main
   pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
     branches:
-      - develop
-      - main
+      - '**'
 
 permissions:
   contents: write
 
 jobs:
   quality:
+    if: github.event.pull_request.draft == false && github.base_ref != 'main'
     name: linter
     runs-on: ubuntu-latest
     steps:
