@@ -252,8 +252,8 @@ watch(
                         description="It looks like you haven't added any members."
                         :actions="[
                             {
-                                icon: 'i-heroicons:user-plus',
-                                label: 'Invite Team Member',
+                                icon: 'i-heroicons:envelope',
+                                label: 'Invite Member',
                                 onClick: async () => {
                                     scrollTo('add-team-member-section')
                                 },
