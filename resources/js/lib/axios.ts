@@ -2,11 +2,11 @@ import { router } from '@inertiajs/vue3'
 import axios from 'axios'
 
 
-const apiFetch = axios.create({})
+const httpClient = axios.create({})
 
-apiFetch.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+httpClient.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 
-apiFetch.interceptors.response.use(
+httpClient.interceptors.response.use(
     response => response,
     error => {
         // Ensure the error has a response (network errors may not)
@@ -26,4 +26,4 @@ apiFetch.interceptors.response.use(
     }
 );
 
-export default apiFetch
+export default httpClient
