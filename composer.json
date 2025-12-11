@@ -33,6 +33,7 @@
         "lacodix/laravel-model-filter": "^3.6",
         "laravel/fortify": "^1.30",
         "laravel/framework": "^12.0",
+        "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
@@ -100,7 +101,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "bunx concurrently \"composer mailpit\" \"php artisan queue:listen --tries=1\" \"php artisan schedule:work\" \"bun run dev\" --names=mailserver,queue,scheduler,vite --kill-others  -c auto"
+            "bunx concurrently \"composer mailpit\" \"composer reverb\" \"php artisan queue:listen --tries=1\" \"php artisan schedule:work\" \"bun run dev\" --names=mailserver,reverb,queue,scheduler,vite --kill-others  -c auto"
         ],
         "format:be": [
             "vendor/bin/pint"
@@ -112,6 +113,10 @@
         "format": [
             "@format:be",
             "@format:fe"
+        ],
+        "reverb": [
+            "Composer\\Config::disableProcessTimeout",
+            "php artisan reverb:start"
         ],
         "mailpit": [
             "Composer\\Config::disableProcessTimeout",
@@ -140,19 +145,15 @@
             "echo Cleaning up Playwright.",
             "bunx playwright uninstall --all"
         ],
-
         "test:browser": [
             "php artisan test --testsuite=Browser --bail"
         ],
-
         "test:features": [
             "php artisan test --testsuite=Feature --bail"
         ],
-
         "test:api": [
             "php artisan test --testsuite=Api --bail"
         ],
-
         "test": [
             "@php artisan config:clear --ansi",
             "@test:api",

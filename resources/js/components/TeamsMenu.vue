@@ -4,8 +4,9 @@ import httpClient from '@/lib/axios'
 import emitter from '@/lib/emitter'
 import { TEAMS_EVENTS } from '@/utils/constants'
 import { router } from '@inertiajs/vue3'
+import { echo } from '@laravel/echo-vue'
 import type { DropdownMenuItem } from '@nuxt/ui'
-import { computed, onBeforeMount, ref } from 'vue'
+import { computed, onBeforeMount, ref, watch } from 'vue'
 
 defineProps<{
     collapsed?: boolean
@@ -30,10 +31,10 @@ interface ITeamsMenu {
     onSelect?: () => void
 }
 
+const toast = useToast()
 const teams = ref<ITeamsMenu[]>([])
 const overlay = useOverlay()
 const createTeamModalAction = overlay.create(CreateTeam)
-
 const selectedTeam = ref<ITeamsMenu>()
 
 const items = computed<DropdownMenuItem[][]>(() => {
@@ -68,7 +69,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
     ]
 })
 
-const retrieveTeams = async () => {
+const retrieveTeams = async (override: boolean = true) => {
     const teamsResp = await httpClient<ITeams[]>(route('teams.getTeamMenu'))
     teams.value = teamsResp.data.map((team: ITeams) => {
         return {
@@ -79,11 +80,13 @@ const retrieveTeams = async () => {
             },
         }
     })
-    teams.value.forEach((team) => {
-        if (team.current_team) {
-            selectedTeam.value = team
-        }
-    })
+    if (override) {
+        teams.value.forEach((team) => {
+            if (team.current_team) {
+                selectedTeam.value = team
+            }
+        })
+    }
 }
 
 onBeforeMount(async () => {
@@ -95,6 +98,23 @@ const reloadTeamsAndPermissions = () => {
         only: ['auth'],
     })
 }
+const currentOwnerTeamDeleted = async () => {
+    // refresh client information
+    reloadTeamsAndPermissions()
+
+    await retrieveTeams()
+    teams.value.forEach((team) => {
+        if (team.default) {
+            selectedTeam.value = team
+            httpClient
+                .post(route('teams.switchTeam'), {
+                    team: team.id,
+                })
+                .then(() => emitter.emit(TEAMS_EVENTS.SWITCH, team.id))
+        }
+    })
+    router.visit(route('dashboard'))
+}
 
 emitter.on(TEAMS_EVENTS.SWITCH, () => reloadTeamsAndPermissions())
 emitter.on(TEAMS_EVENTS.UPDATE, async () => {
@@ -103,6 +123,36 @@ emitter.on(TEAMS_EVENTS.UPDATE, async () => {
 emitter.on(TEAMS_EVENTS.CREATE, async () => {
     await retrieveTeams()
 })
+
+watch(
+    () => selectedTeam,
+    (currenTeam) => {
+        if (currenTeam.value) {
+            echo()
+                .private(`Team.${currenTeam.value?.id}`)
+                .listen('.deleted', async (event: { team: ITeams }) => {
+                    // make sure that the current team that the user is not the deleted, if it is then change the team and redirect to
+                    // dashboard, otherwise refresh the available team list only.
+                    if (selectedTeam.value?.id === event.team.id) {
+                        toast.add({
+                            title: 'Team has been deleted',
+                            description: 'The team that you are part of has been deleted by the owner.',
+                            color: 'warning',
+                            icon: 'i-lucide:triangle-alert',
+                        })
+                        await currentOwnerTeamDeleted()
+                    } else {
+                        reloadTeamsAndPermissions()
+                        await retrieveTeams(false)
+                    }
+                })
+        }
+    },
+    {
+        immediate: true,
+        deep: true,
+    },
+)
 </script>
 
 <template>

@@ -1,7 +1,8 @@
 import '../css/app.css'
 
 import { initializeUiColor } from '@/composables/useColorUi'
-import { createInertiaApp } from '@inertiajs/vue3'
+import { createInertiaApp, router } from '@inertiajs/vue3'
+import { configureEcho, echo } from '@laravel/echo-vue'
 import ui from '@nuxt/ui/vue-plugin'
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers'
 import type { DefineComponent } from 'vue'
@@ -9,7 +10,20 @@ import { createApp, h } from 'vue'
 import { ZiggyVue } from 'ziggy-js'
 import { initializeTheme } from './composables/useAppearance'
 
-const appName = import.meta.env.VITE_APP_NAME || 'Starter Kit'
+configureEcho({
+    broadcaster: 'reverb',
+})
+
+// @see: https://laravel.com/docs/12.x/broadcasting#only-to-others-configuration
+router.on('before', (event) => {
+    const id = echo().socketId()
+
+    if (id) {
+        event.detail.visit.headers['X-Socket-ID'] = id
+    }
+})
+
+const appName = import.meta.env.VITE_APP_NAME || 'Mensahero'
 
 createInertiaApp({
     progress: { color: '#f53003' },

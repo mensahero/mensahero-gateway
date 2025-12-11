@@ -7,6 +7,7 @@ use App\Actions\Teams\CreateRolePermission;
 use App\Actions\Teams\CreateTeams;
 use App\Actions\Teams\RetrieveCurrentSessionTeam;
 use App\Concerns\RolesPermissions;
+use App\Events\TeamDeletedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Teams\InvitationMemberResource;
 use App\Http\Resources\Teams\TeamResource;
@@ -126,6 +127,8 @@ class TeamsController extends Controller
             $newDefaultTeam = $team->owner->ownedTeams()->inRandomOrder()->first()->update(['default' => true]);
             resolve(CreateCurrentSessionTeam::class)->handle($newDefaultTeam);
         }
+
+        broadcast(new TeamDeletedEvent($team))->toOthers();
 
         $team->delete();
 
