@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('permissions', static function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->string('name');
-            $table->foreignUuid('role_id');
-            $table->foreignUuid('team_id');
+            $table->foreignUuid('role_id')->constrained('roles')->cascadeOnDelete();
+            $table->foreignUuid('team_id')->constrained('teams')->cascadeOnDelete();
         });
     }
 

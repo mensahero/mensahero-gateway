@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('team_user', function (Blueprint $table) {
             $table->id();
             $table->foreignId('team_id');
-            $table->foreignId('user_id')->index();
+            $table->foreignId('user_id')->index()->constrained('users')->cascadeOnDelete();
             $table->foreignUuid('role_id');
             $table->timestamps();
 
