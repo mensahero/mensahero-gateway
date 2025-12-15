@@ -13,8 +13,8 @@
     },
     "devDependencies": {
         "@laravel/echo-vue": "^2.2.6",
-        "@tailwindcss/vite": "^4.1.17",
-        "@vitejs/plugin-vue": "^6.0.2",
+        "@tailwindcss/vite": "^4.1.18",
+        "@vitejs/plugin-vue": "^6.0.3",
         "@vue/eslint-config-typescript": "^14.6.0",
         "concurrently": "^9.2.1",
         "eslint-config-prettier": "^10.1.8",
@@ -32,7 +32,7 @@
         "vue-tsc": "^2.2.12"
     },
     "dependencies": {
-        "@inertiajs/vue3": "^2.2.21",
+        "@inertiajs/vue3": "^2.3.1",
         "@nuxt/ui": "^4.2.1",
         "@vueuse/core": "^13.9.0",
         "axios": "^1.13.2",
@@ -40,14 +40,14 @@
         "lodash": "^4.17.21",
         "mitt": "^3.0.1",
         "playwright": "^1.57.0",
-        "tailwindcss": "^4.1.17",
+        "tailwindcss": "^4.1.18",
         "text-case": "^1.2.9",
         "vue": "^3.5.25",
         "ziggy-js": "^2.6.0"
     },
     "optionalDependencies": {
         "@rollup/rollup-linux-x64-gnu": "4.9.5",
-        "@tailwindcss/oxide-linux-x64-gnu": "^4.1.17",
+        "@tailwindcss/oxide-linux-x64-gnu": "^4.1.18",
         "lightningcss-linux-x64-gnu": "^1.30.2"
     }
 }
