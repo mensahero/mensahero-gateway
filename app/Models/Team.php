@@ -7,6 +7,7 @@ use App\Observers\TeamsObserver;
 use Exception;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,6 +17,7 @@ use Illuminate\Support\Collection;
 #[ObservedBy([TeamsObserver::class])]
 class Team extends Model
 {
+    use HasFactory;
     use HasUuids;
 
     /**

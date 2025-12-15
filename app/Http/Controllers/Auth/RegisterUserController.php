@@ -3,9 +3,9 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Actions\Teams\CreateCurrentSessionTeam;
-use App\Actions\Teams\CreateRolePermission;
 use App\Actions\Teams\CreateTeams;
 use App\Actions\User\CreateUser;
+use App\Events\Team\TeamCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use Illuminate\Auth\Events\Registered;
@@ -39,7 +39,7 @@ class RegisterUserController extends Controller
                 'user_id' => $user->id,
             ], markAsDefault: true);
 
-        resolve(CreateRolePermission::class)->handle($teams);
+        event(new TeamCreatedEvent($teams, $user));
 
         event(new Registered($user));
 

@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Teams;
 
 use App\Actions\Teams\CreateCurrentSessionTeam;
-use App\Actions\Teams\CreateRolePermission;
 use App\Actions\Teams\CreateTeams;
 use App\Actions\Teams\RetrieveCurrentSessionTeam;
 use App\Concerns\RolesPermissions;
+use App\Events\Team\TeamCreatedEvent;
 use App\Events\Team\TeamDeletedEvent;
 use App\Events\Team\UpdatedEvent;
 use App\Events\Team\UserRemovedEvent;
@@ -71,7 +71,8 @@ class TeamsController extends Controller
             'name'    => Str::ucwords($request->name),
             'default' => $request->boolean('default'),
         ], $request->boolean('default'));
-        resolve(CreateRolePermission::class)->handle($team);
+
+        event(new TeamCreatedEvent($team, $user));
 
         resolve(CreateCurrentSessionTeam::class)->handle($team);
 

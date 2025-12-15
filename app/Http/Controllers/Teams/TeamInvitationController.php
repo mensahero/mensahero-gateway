@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\Teams;
 
 use App\Actions\Teams\CreateCurrentSessionTeam;
-use App\Actions\Teams\CreateRolePermission;
 use App\Actions\Teams\CreateTeams;
 use App\Actions\Teams\RetrieveCurrentSessionTeam;
 use App\Actions\User\CreateUser;
 use App\Events\Team\Invitations\AcceptedEvent;
+use App\Events\Team\TeamCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Mail\Team\TeamInvitationMail;
@@ -257,7 +257,7 @@ class TeamInvitationController extends Controller
                 'user_id' => $user->id,
             ], markAsDefault: true);
 
-        resolve(CreateRolePermission::class)->handle($personalTeam);
+        event(new TeamCreatedEvent($personalTeam, $user));
 
         event(new Registered($user));
 

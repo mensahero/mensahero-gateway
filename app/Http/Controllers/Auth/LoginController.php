@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Auth;
 
 use App\Actions\Auth\LoginUser;
 use App\Actions\Teams\CreateCurrentSessionTeam;
-use App\Actions\Teams\CreateRolePermission;
 use App\Actions\Teams\CreateTeams;
 use App\Actions\User\CreateUser;
+use App\Events\Team\TeamCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
@@ -102,11 +102,12 @@ class LoginController extends Controller
             $teams = resolve(CreateTeams::class)->handle(
                 user: $user,
                 attribute: [
-                    'name'    => Str::possessive(Str::of($user->name)->trim()->explode(' ')->first()),
+                    'name'    => Str::possessive(Str::of($user->name)->trim()->explode(' ')->first().Str::random(3)),
                     'user_id' => $user->id,
                 ], markAsDefault: true);
 
-            resolve(CreateRolePermission::class)->handle($teams);
+            event(new TeamCreatedEvent($teams, $user));
+
         }
 
         Auth::login($user, $request->boolean('remember'));
