@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Foundation\Testing\WithCachedConfig;
+use Illuminate\Foundation\Testing\WithCachedRoutes;
 use Tests\TestCase;
 
 /*
@@ -16,6 +18,8 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
+    ->use(WithCachedRoutes::class)
+    ->use(WithCachedConfig::class)
     ->in('Feature', 'Browser', 'Api');
 
 /*

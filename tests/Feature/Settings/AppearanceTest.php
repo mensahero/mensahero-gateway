@@ -1,5 +1,8 @@
 <?php
 
+use App\Actions\Teams\CreateRolePermission;
+use App\Concerns\TeamSessionKeys;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -7,10 +10,16 @@ use Inertia\Testing\AssertableInertia as Assert;
 uses(RefreshDatabase::class);
 
 it('can render appearance page', function (): void {
-    $user = User::factory()->withoutTwoFactor()->create();
+    $user = User::factory()->withoutTwoFactor()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     $this->actingAs($user)
-        ->withSession(['auth.password_confirmed_at' => time()])
+        ->withSession([
+            'auth.password_confirmed_at'            => time(),
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
         ->get(route('settings.appearance.edit'))
         ->assertInertia(fn (Assert $page): Assert => $page
             ->component('settings/Appearance')
@@ -19,9 +28,16 @@ it('can render appearance page', function (): void {
 });
 
 test('user will have an default theme and colors', function (): void {
-    $user = User::factory()->withoutTwoFactor()->create();
+    $user = User::factory()->withoutTwoFactor()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
         ->get(route('settings.appearance.edit'))
         ->assertInertia(fn (Assert $page): Assert => $page
             ->component('settings/Appearance')
@@ -34,9 +50,16 @@ test('user will have an default theme and colors', function (): void {
 });
 
 it('can update the theme to dark', function (): void {
-    $user = User::factory()->withoutTwoFactor()->create();
+    $user = User::factory()->withoutTwoFactor()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
         ->patch(route('settings.appearance.store'), [
             'mode' => 'dark',
         ])
@@ -50,8 +73,16 @@ it('can update the theme to dark', function (): void {
 });
 
 it('can update the theme to light', function (): void {
-    $user = User::factory()->withoutTwoFactor()->create();
+    $user = User::factory()->withoutTwoFactor()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
+
     $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
         ->patch(route('settings.appearance.store'), [
             'mode' => 'light',
         ])
@@ -64,9 +95,16 @@ it('can update the theme to light', function (): void {
 });
 
 it('can update the primary color of the user UI', function (): void {
-    $user = User::factory()->withoutTwoFactor()->create();
+    $user = User::factory()->withoutTwoFactor()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
         ->patch(route('settings.appearance.store'), [
             'mode'    => 'dark',
             'primary' => 'sky',
@@ -81,9 +119,16 @@ it('can update the primary color of the user UI', function (): void {
 });
 
 it('can update the secondary color of the user UI', function (): void {
-    $user = User::factory()->withoutTwoFactor()->create();
+    $user = User::factory()->withoutTwoFactor()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
         ->patch(route('settings.appearance.store'), [
             'mode'      => 'dark',
             'secondary' => 'gray',
@@ -99,9 +144,16 @@ it('can update the secondary color of the user UI', function (): void {
 
 it('requires theme to have value on every patch of the record', function (): void {
 
-    $user = User::factory()->withoutTwoFactor()->create();
+    $user = User::factory()->withoutTwoFactor()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
         ->patch(route('settings.appearance.store'), [
             'secondary' => 'gray',
         ])
