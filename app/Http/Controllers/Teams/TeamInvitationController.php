@@ -159,24 +159,6 @@ class TeamInvitationController extends Controller
                 ->setStatusCode(403);
         }
 
-        if ($invitation->team->hasUserWithEmail($invitation->email)) {
-            $user = User::query()->where('email', $invitation->email)->firstOrFail();
-            $invitation->team->users()->attach($user, ['role_id' => $invitation->role_id]);
-
-            broadcast(new AcceptedEvent($invitation->team))->toOthers();
-
-            // delete the invitation
-            $invitation->delete();
-
-            InertiaNotification::make()
-                ->success()
-                ->title('Invitation accepted')
-                ->message(__('Great! You have accepted the invitation to join the :team team.', ['team' => $invitation->team->name]))
-                ->send();
-
-            return to_route('dashboard');
-        }
-
         if ($user = User::query()->where('email', $invitation->email)->first()) {
             $invitation->team->users()->attach($user, ['role_id' =>  $invitation->role_id]);
             InertiaNotification::make()
