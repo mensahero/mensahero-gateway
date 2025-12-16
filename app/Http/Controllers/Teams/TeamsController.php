@@ -131,7 +131,8 @@ class TeamsController extends Controller
 
         if ($team->default) {
             // make one of the team as default
-            $newDefaultTeam = $team->owner->ownedTeams()->inRandomOrder()->first()->update(['default' => true]);
+            $newDefaultTeam = $team->owner->ownedTeams()->inRandomOrder()->first();
+            $newDefaultTeam->update(['default' => true]);
             resolve(CreateCurrentSessionTeam::class)->handle($newDefaultTeam);
         } else {
             $randomTeam = $team->owner->allTeams()->random()->first();
