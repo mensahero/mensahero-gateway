@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Fortify\Features;
@@ -14,7 +15,9 @@ test('login screen can be rendered', function (): void {
 });
 
 test('users can authenticate using the login screen', function (): void {
-    $user = User::factory()->withoutTwoFactor()->create();
+    $user = User::factory()->withoutTwoFactor()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
 
     $this->post(route('login.store'), [
         'email'    => $user->email,
@@ -35,7 +38,9 @@ test('user with two factor enabled are redirected to two factor challenge', func
         'confirmPassword' => true,
     ]);
 
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
 
     $user->forceFill([
         'two_factor_secret'         => encrypt('test-secret'),
@@ -53,7 +58,10 @@ test('user with two factor enabled are redirected to two factor challenge', func
 });
 
 test('users can not authenticate with invalid password', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
     $this->post(route('login.store'), [
         'email'    => $user->email,
         'password' => 'wrong-password',
@@ -63,7 +71,9 @@ test('users can not authenticate with invalid password', function (): void {
 });
 
 test('user can logout', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
 
     $this->actingAs($user)->post(route('logout'))
         ->assertRedirect(route('home'));
@@ -73,7 +83,9 @@ test('user can logout', function (): void {
 });
 
 test('login is rate limited', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
 
     RateLimiter::increment(implode('|', [$user->email, '127.0.0.1']), amount: 10);
 

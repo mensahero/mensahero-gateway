@@ -13,7 +13,7 @@ use Inertia\Response;
 
 class UserEmailVerificationController extends Controller
 {
-    public function notice(Request $request): RedirectResponse|Response
+    public function notice(Request $request): Response|RedirectResponse
     {
         return $request->user()->hasVerifiedEmail()
             ? redirect()->intended(route('dashboard', absolute: false))

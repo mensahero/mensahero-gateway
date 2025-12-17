@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Actions\Auth\LoginUser;
+use App\Actions\Teams\CreateCurrentSessionTeam;
+use App\Actions\Teams\CreateTeams;
 use App\Actions\User\CreateUser;
+use App\Events\Team\TeamCreatedEvent;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Models\User;
@@ -12,11 +15,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Laravel\Fortify\Features;
 use Laravel\Socialite\Facades\Socialite;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Throwable;
 
 class LoginController extends Controller
 {
@@ -54,6 +59,9 @@ class LoginController extends Controller
 
         $request->session()->regenerate();
 
+        $userDefaultTeam = $user->allTeams()->where('default', true)->first();
+        resolve(CreateCurrentSessionTeam::class)->handle($userDefaultTeam);
+
         return redirect()->intended(route('dashboard', absolute: false));
 
     }
@@ -73,6 +81,9 @@ class LoginController extends Controller
         return Inertia::location(Socialite::driver($provider)->redirect());
     }
 
+    /**
+     * @throws Throwable
+     */
     public function ssoStore(Request $request, string $provider): RedirectResponse
     {
         $ssoUser = Socialite::driver($provider)->user();
@@ -86,11 +97,25 @@ class LoginController extends Controller
                 'email'             => $ssoUser->getEmail(),
                 'email_verified_at' => Date::now(),
             ]);
+
+            // Create a personal team for the user and it will the default team
+            $teams = resolve(CreateTeams::class)->handle(
+                user: $user,
+                attribute: [
+                    'name'    => Str::possessive(Str::of($user->name)->trim()->explode(' ')->first().Str::random(3)),
+                    'user_id' => $user->id,
+                ], markAsDefault: true);
+
+            event(new TeamCreatedEvent($teams, $user));
+
         }
 
         Auth::login($user, $request->boolean('remember'));
 
         $request->session()->regenerate();
+
+        $userDefaultTeam = $user->allTeams()->where('default', true)->first();
+        resolve(CreateCurrentSessionTeam::class)->handle($userDefaultTeam);
 
         return redirect()->intended(route('dashboard', absolute: false));
 

@@ -33,6 +33,7 @@
         "lacodix/laravel-model-filter": "^3.6",
         "laravel/fortify": "^1.30",
         "laravel/framework": "^12.0",
+        "laravel/reverb": "^1.0",
         "laravel/sanctum": "^4.0",
         "laravel/socialite": "^5.23",
         "laravel/tinker": "^2.10.1",
@@ -43,11 +44,14 @@
         "socialiteproviders/zoho": "^4.1",
         "socialiteproviders/zoom": "^4.0",
         "stevebauman/location": "^7.6",
-        "tightenco/ziggy": "^2.6"
+        "tightenco/ziggy": "^2.6",
+        "wildside/userstamps": "^3.1"
     },
     "require-dev": {
         "driftingly/rector-laravel": "^2.0",
         "fakerphp/faker": "^1.23",
+        "laradumps/laradumps": "^4.6",
+        "laradumps/laradumps-core": "^3.2",
         "larastan/larastan": "^3.7",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
@@ -77,7 +81,8 @@
             "@php artisan package:discover --ansi"
         ],
         "post-update-cmd": [
-            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
+            "@php artisan vendor:publish --tag=laravel-assets --ansi --force",
+            "@php artisan erag:sync-disposable-email-list"
         ],
         "post-root-package-install": [
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
@@ -97,7 +102,11 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "bunx concurrently \"composer mailpit\" \"php artisan queue:listen --tries=1\" \"php artisan schedule:work\" \"bun run dev\" --names=mailserver,queue,scheduler,vite --kill-others  -c auto"
+            "bunx --bun concurrently \"composer mailpit\" \"composer reverb\" \"@php artisan queue:listen --tries=1\" \"@php artisan schedule:work\" \"bun run dev\" --names=mailserver,reverb,queue,scheduler,vite --kill-others --prefix name -c \"#93c5fd,#c4b5fd,#fb7185,#fdba74\" "
+        ],
+        "herd:dev": [
+            "Composer\\Config::disableProcessTimeout",
+            "bunx --bun concurrently -c cyan,blue,green,yellow \"composer run reverb\" \"composer run queue\" \"composer run mailpit\" \"bun run dev\" --names=reverb,queue,mailserver,dev --kill-others"
         ],
         "format:be": [
             "vendor/bin/pint"
@@ -109,6 +118,14 @@
         "format": [
             "@format:be",
             "@format:fe"
+        ],
+        "reverb": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan reverb:start --debug"
+        ],
+        "queue": [
+            "Composer\\Config::disableProcessTimeout",
+            "@php artisan queue:listen --tries=1"
         ],
         "mailpit": [
             "Composer\\Config::disableProcessTimeout",
@@ -131,31 +148,33 @@
         "playwright:install": [
             "echo Installing Playwright.",
             "bun install playwright@latest",
-            "bunx playwright install"
+            "bunx --bun playwright install"
         ],
         "playwright:cleanup": [
             "echo Cleaning up Playwright.",
-            "bunx playwright uninstall --all"
+            "bunx --bun playwright uninstall --all"
         ],
-
         "test:browser": [
             "php artisan test --testsuite=Browser --bail"
         ],
-
         "test:features": [
             "php artisan test --testsuite=Feature --bail"
         ],
-
         "test:api": [
             "php artisan test --testsuite=Api --bail"
         ],
-
         "test": [
             "@php artisan config:clear --ansi",
             "@test:api",
             "@test:features",
             "@test:browser"
-
+        ],
+        "pre-commit": [
+            "@rector",
+            "@format",
+            "@analyse",
+            "@test:features",
+            "@test:api"
         ]
     },
     "scripts-descriptions": {
@@ -166,7 +185,7 @@
         "playwright:cleanup": "Cleanup Playwright",
         "test:browser": "Run the browser tests",
         "test:features": "Run the feature tests",
-        "test:Api": "Run the API tests",
+        "test:api": "Run the API tests",
         "test": "Run the whole suite tests",
         "format:be": "Fixing the Code Style according to PER standards for the backend code",
         "format:fe": "Fixing the Code Style according to PER standards for the frontend code",
@@ -174,7 +193,8 @@
         "mailpit": "Run the mailpit server for testing emails",
         "rector": "Fixing the code according to the Rector Rules",
         "rector:check": "Showing the suggested changes from Rector",
-        "analyse": "Analyse the code with PHPStan code analysis"
+        "analyse": "Analyse the code with PHPStan code analysis",
+        "pre-commit": "Run the pre-commit hooks"
     },
     "extra": {
         "laravel": {

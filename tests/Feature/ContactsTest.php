@@ -1,11 +1,12 @@
 <?php
 
+use App\Actions\Teams\CreateRolePermission;
+use App\Concerns\TeamSessionKeys;
 use App\Models\Contacts;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
-
-use function Pest\Laravel\actingAs;
 
 uses(RefreshDatabase::class);
 
@@ -20,12 +21,18 @@ test('guests are redirected to login when visiting contacts', function (): void 
 });
 
 test('authenticated user can view contacts page and receives expected inertia props', function (): void {
-    $user = User::factory()->create();
-    actingAs($user);
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
 
-    $response = $this->get(route('contacts.create'));
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
-    $response->assertOk()
+    $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
+        ->get(route('contacts.create'))
+        ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Contacts')
             ->has('contacts')
@@ -36,8 +43,11 @@ test('authenticated user can view contacts page and receives expected inertia pr
 });
 
 test('user can create a contact and mobile is stored in E164 format', function (): void {
-    $user = User::factory()->create();
-    actingAs($user);
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     $payload = [
         'name'         => 'Juan Dela Cruz',
@@ -47,7 +57,11 @@ test('user can create a contact and mobile is stored in E164 format', function (
         'source'       => 'Phone',
     ];
 
-    $this->post(route('contacts.store'), $payload)
+    $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
+        ->post(route('contacts.store'), $payload)
         ->assertRedirect(route('contacts.create'));
 
     // Controller formats to E.164, ensure it is persisted and linked to the authenticated user
@@ -61,12 +75,16 @@ test('user can create a contact and mobile is stored in E164 format', function (
 });
 
 test('creating a duplicate mobile returns validation error', function (): void {
-    $user = User::factory()->create();
-    actingAs($user);
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     // Seed an existing contact with the formatted mobile
     Contacts::query()->create([
         'user_id'      => $user->id,
+        'team_id'      => $user->ownedTeams->first()->id,
         'name'         => 'Existing',
         'mobile'       => '+639123456789',
         'country_code' => 'PH',
@@ -80,16 +98,24 @@ test('creating a duplicate mobile returns validation error', function (): void {
         'source'       => 'Phone',
     ];
 
-    $this->post(route('contacts.store'), $payload)
+    $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
+        ->post(route('contacts.store'), $payload)
         ->assertSessionHasErrors(['mobile']);
 });
 
 test('user can delete selected contacts', function (): void {
-    $user = User::factory()->create();
-    actingAs($user);
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     $a = Contacts::query()->create([
         'user_id'      => $user->id,
+        'team_id'      => $user->ownedTeams->first()->id,
         'name'         => 'Alpha',
         'mobile'       => '+639111111111',
         'country_code' => 'PH',
@@ -97,27 +123,36 @@ test('user can delete selected contacts', function (): void {
     ]);
     $b = Contacts::query()->create([
         'user_id'      => $user->id,
+        'team_id'      => $user->ownedTeams->first()->id,
         'name'         => 'Beta',
         'mobile'       => '+639222222222',
         'country_code' => 'PH',
         'source'       => 'Phone',
     ]);
 
-    $this->post(route('contacts.destroy'), [
-        'ids' => [$a->id, $b->id],
-    ])->assertRedirect(route('contacts.create'));
+    $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
+        ->post(route('contacts.destroy'), [
+            'ids' => [$a->id, $b->id],
+        ])->assertRedirect(route('contacts.create'));
 
     $this->assertDatabaseMissing('contacts', ['id' => $a->id]);
     $this->assertDatabaseMissing('contacts', ['id' => $b->id]);
 });
 
 test('contacts can be searched by name or mobile via query string', function (): void {
-    $user = User::factory()->create();
-    actingAs($user);
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     // Seed contacts for the authenticated user
     $alpha = Contacts::query()->create([
         'user_id'      => $user->id,
+        'team_id'      => $user->ownedTeams->first()->id,
         'name'         => 'Alpha Contact',
         'mobile'       => '+639111111111',
         'country_code' => 'PH',
@@ -125,6 +160,7 @@ test('contacts can be searched by name or mobile via query string', function ():
     ]);
     $beta = Contacts::query()->create([
         'user_id'      => $user->id,
+        'team_id'      => $user->ownedTeams->first()->id,
         'name'         => 'Beta Person',
         'mobile'       => '+639222222222',
         'country_code' => 'PH',
@@ -132,9 +168,13 @@ test('contacts can be searched by name or mobile via query string', function ():
     ]);
 
     // Same search term for another user to ensure global scope is respected
-    $otherUser = User::factory()->create();
+    $otherUser = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
     Contacts::query()->create([
         'user_id'      => $otherUser->id,
+        'team_id'      => $otherUser->ownedTeams->first()->id,
         'name'         => 'Alpha Stranger',
         'mobile'       => '+639333333333',
         'country_code' => 'PH',
@@ -142,7 +182,11 @@ test('contacts can be searched by name or mobile via query string', function ():
     ]);
 
     // Search by name should return only matching records for the signed-in user
-    $this->get(route('contacts.create', ['search' => 'Alpha']))
+    $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
+        ->get(route('contacts.create', ['search' => 'Alpha']))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Contacts')
@@ -153,7 +197,11 @@ test('contacts can be searched by name or mobile via query string', function ():
         );
 
     // Search by a value that yields no matches should return empty data
-    $this->get(route('contacts.create', ['search' => 'Nope']))
+    $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
+        ->get(route('contacts.create', ['search' => 'Nope']))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Contacts')
@@ -161,7 +209,11 @@ test('contacts can be searched by name or mobile via query string', function ():
         );
 
     // Search by mobile should also work
-    $this->get(route('contacts.create', ['search' => substr($beta->mobile, -4)]))
+    $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
+        ->get(route('contacts.create', ['search' => substr($beta->mobile, -4)]))
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page
             ->component('Contacts')
@@ -171,12 +223,16 @@ test('contacts can be searched by name or mobile via query string', function ():
 });
 
 test('user can update an existing contact', function (): void {
-    $user = User::factory()->create();
-    actingAs($user);
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     // Create an existing contact
     $contact = Contacts::query()->create([
         'user_id'      => $user->id,
+        'team_id'      => $user->ownedTeams->first()->id,
         'name'         => 'Original Name',
         'mobile'       => '+639111111111',
         'country_code' => 'PH',
@@ -191,7 +247,11 @@ test('user can update an existing contact', function (): void {
         'source'       => 'CRM',
     ];
 
-    $this->put(route('contacts.update', $contact->id), $payload)
+    $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
+        ->put(route('contacts.update', $contact->id), $payload)
         ->assertRedirect(route('contacts.create'));
 
     // Verify the contact was updated

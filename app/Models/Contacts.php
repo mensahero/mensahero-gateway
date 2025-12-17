@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Lacodix\LaravelModelFilter\Traits\HasFilters;
 use Lacodix\LaravelModelFilter\Traits\IsSearchable;
+use Mattiverse\Userstamps\Traits\Userstamps;
 
 #[ScopedBy([UserContactsScope::class])]
 class Contacts extends Model
@@ -20,6 +21,7 @@ class Contacts extends Model
     use HasFilters;
     use HasUuids;
     use IsSearchable;
+    use Userstamps;
 
     protected array $searchable = [
         'name',
@@ -38,6 +40,7 @@ class Contacts extends Model
      */
     protected $fillable = [
         'user_id',
+        'team_id',
         'name',
         'mobile',
         'country_code',
@@ -50,6 +53,14 @@ class Contacts extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * @return BelongsTo<Team, $this>
+     */
+    public function team(): BelongsTo
+    {
+        return $this->belongsTo(Team::class, 'team_id', 'id');
     }
 
     public function casts(): array

@@ -1,11 +1,16 @@
 <?php
 
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 
 uses(RefreshDatabase::class);
+
+beforeEach(function () {
+    Notification::fake();
+});
 
 pest()->group('feature');
 
@@ -15,9 +20,10 @@ test('reset password link screen can be rendered', function (): void {
 });
 
 test('reset password link can be requested', function (): void {
-    Notification::fake();
 
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
@@ -25,9 +31,10 @@ test('reset password link can be requested', function (): void {
 });
 
 test('reset password screen can be rendered', function (): void {
-    Notification::fake();
 
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
@@ -41,9 +48,9 @@ test('reset password screen can be rendered', function (): void {
 
 test('password can be reset with valid token', function (): void {
 
-    Notification::fake();
-
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
 
     $this->post(route('password.email'), ['email' => $user->email]);
 
@@ -62,7 +69,9 @@ test('password can be reset with valid token', function (): void {
 });
 
 test('password can not be reset with invalid token', function (): void {
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
 
     $response = $this->post(route('password.store'), [
         'token'                 => 'invalid-token',

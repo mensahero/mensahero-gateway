@@ -1,5 +1,8 @@
 <?php
 
+use App\Actions\Teams\CreateRolePermission;
+use App\Concerns\TeamSessionKeys;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -17,10 +20,17 @@ test('it can render two factor page', function (): void {
         'confirmPassword' => true,
     ]);
 
-    $user = User::factory()->withoutTwoFactor()->create();
+    $user = User::factory()->withoutTwoFactor()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     $this->actingAs($user)
-        ->withSession(['auth.password_confirmed_at' => time()])
+        ->withSession([
+            'auth.password_confirmed_at'            => time(),
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
         ->get(route('settings.two-factor.show'))
         ->assertInertia(fn (Assert $page): Assert => $page
             ->component('settings/TwoFactor')
@@ -33,7 +43,11 @@ test('it requires password confirmation if enabled, when visiting the two factor
         $this->markTestSkipped('Two-factor authentication is not enabled.');
     }
 
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     Features::twoFactorAuthentication([
         'confirm'         => true,
@@ -41,6 +55,9 @@ test('it requires password confirmation if enabled, when visiting the two factor
     ]);
 
     $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
         ->get(route('settings.two-factor.show'))
         ->assertRedirect(route('password.confirm'));
 });
@@ -50,7 +67,11 @@ test('it doesnt require password confirmation if disabled when visiting two fact
         $this->markTestSkipped('Two-factor authentication is not enabled.');
     }
 
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
 
     Features::twoFactorAuthentication([
         'confirm'         => true,
@@ -58,6 +79,9 @@ test('it doesnt require password confirmation if disabled when visiting two fact
     ]);
 
     $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])
         ->get(route('settings.two-factor.show'))
         ->assertOk()
         ->assertInertia(fn (Assert $page): Assert => $page

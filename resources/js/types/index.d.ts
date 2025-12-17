@@ -3,6 +3,8 @@ import { User } from '@/types/user'
 
 export interface Auth {
     user: User
+    role: string
+    permissions: string[]
 }
 
 export interface UiColors {
@@ -17,6 +19,7 @@ export interface Theme {
 export type AppPageProps<T extends Record<string, unknown> = Record<string, unknown>> = T & {
     name: string
     auth: Auth
+    csrf_token: string
     theme: Theme & UiColors
     notification?: Notification
 }

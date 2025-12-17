@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -26,7 +27,9 @@ test('two factor challenge can be rendered', function (): void {
         'confirmPassword' => true,
     ]);
 
-    $user = User::factory()->create();
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
 
     $user->forceFill([
         'two_factor_secret'         => encrypt('test-secret'),

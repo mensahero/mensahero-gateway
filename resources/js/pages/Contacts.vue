@@ -6,10 +6,11 @@ import emitter from '@/lib/emitter'
 import { contactColumns } from '@/tables/columns/contacts'
 import { IContact } from '@/types/contacts/contacts'
 import { IModelResource } from '@/types/modelResource'
+import { TEAMS_EVENTS } from '@/utils/constants'
 import { Head, router, useForm } from '@inertiajs/vue3'
 import { getPaginationRowModel } from '@tanstack/table-core'
 import { watchDebounced } from '@vueuse/core'
-import { upperFirst } from 'scule'
+import { upperCase } from 'text-case'
 import { onMounted, onUnmounted, ref, resolveComponent, useTemplateRef, watch } from 'vue'
 import { route } from 'ziggy-js'
 
@@ -157,6 +158,9 @@ watchDebounced(
         maxWait: 5000,
     },
 )
+
+// if the user changes the teams, we need to refresh the user context and its contacts list
+emitter.on(TEAMS_EVENTS.SWITCH, () => reloadInertiaPage())
 </script>
 
 <template>
@@ -278,7 +282,7 @@ watchDebounced(
                                                 :items="[
                                                     { label: 'All', value: 'all' },
                                                     ...props.countryCodes.map((code) => ({
-                                                        label: upperFirst(code),
+                                                        label: upperCase(code),
                                                         value: code,
                                                     })),
                                                 ]"
@@ -296,7 +300,7 @@ watchDebounced(
                                                 :items="[
                                                     { label: 'All', value: 'all' },
                                                     ...props.sourceTypes.map((source) => ({
-                                                        label: upperFirst(source),
+                                                        label: upperCase(source),
                                                         value: source,
                                                     })),
                                                 ]"
@@ -319,7 +323,7 @@ watchDebounced(
                                     ?.getAllColumns()
                                     .filter((column) => column.getCanHide())
                                     .map((column) => ({
-                                        label: upperFirst(column.columnDef.header as string),
+                                        label: upperCase(column.columnDef.header as string),
                                         type: 'checkbox' as const,
                                         checked: column.getIsVisible(),
                                         onUpdateChecked(checked: boolean) {

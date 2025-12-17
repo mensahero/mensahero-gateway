@@ -1,5 +1,8 @@
 <?php
 
+use App\Actions\Teams\CreateRolePermission;
+use App\Concerns\TeamSessionKeys;
+use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -13,8 +16,15 @@ test('guest are redirected to login page', function (): void {
 });
 
 test('authenticated users can visit the dashboard', function (): void {
-    $user = User::factory()->create();
-    $this->actingAs($user);
-    $this->get(route('dashboard'))
+    $user = User::factory()
+        ->has(Team::factory()->state(fn (): array => ['default' => true]), 'ownedTeams')
+        ->create();
+
+    resolve(CreateRolePermission::class)->handle($user->ownedTeams->first());
+
+    $this->actingAs($user)
+        ->withSession([
+            TeamSessionKeys::CURRENT_TEAM_ID->key() => $user->ownedTeams->first()->id,
+        ])->get(route('dashboard'))
         ->assertStatus(200);
 });

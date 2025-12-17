@@ -1,0 +1,73 @@
+import DeleteModal from '@/components/DeleteModal.vue'
+import UpdateTeamRoleModal from '@/components/UpdateTeamRoleModal.vue'
+import { usePermissions } from '@/composables/usePermissions'
+import emitter from '@/lib/emitter'
+import { TMembersTable } from '@/pages/Teams.vue'
+import { TEAMS_EVENTS } from '@/utils/constants'
+import { router, useForm } from '@inertiajs/vue3'
+import type { Row } from '@tanstack/table-core'
+import { lowerCase } from 'text-case'
+
+const overlay = useOverlay()
+const deleteActionModal = overlay.create(DeleteModal)
+const updateTeamRoleActionModal = overlay.create(UpdateTeamRoleModal)
+const { can, cannot } = usePermissions()
+
+export const teamsRows = (row: Row<TMembersTable>) => {
+    return [
+        {
+            type: 'label',
+            label: 'Actions',
+        },
+        {
+            label: 'Update Role',
+            disabled: cannot('team:update'),
+            onSelect: async () => {
+                await updateTeamRoleActionModal.open({
+                    currentRole: row.original.role_id,
+                    teamMemberFlag: lowerCase(row.original.status),
+                    teamMemberId: row.original.id,
+                }).result
+            },
+        },
+        {
+            label: 'Resend Invite',
+            disabled: row.original.status === 'Member' || cannot('team:invite'),
+            onSelect: async () => {
+                router.post(
+                    route('teams.invitations.resend', row.original.id),
+                    {},
+                    {
+                        onSuccess: () => {
+                            emitter.emit(TEAMS_EVENTS.MEMBER_INVITATION_RESENT)
+                        },
+                    },
+                )
+            },
+        },
+        {
+            type: 'separator',
+        },
+        {
+            label: row.original.status === 'Invited' ? 'Revoke Invite' : 'Remove User',
+            color: 'error',
+            disabled: can('team:remove'),
+            onSelect: async () => {
+                const form = useForm({
+                    isMember: row.original.status === 'Member',
+                })
+                await deleteActionModal.open({
+                    description: `Are you sure you want to ${row.original.status === 'Invited' ? 'revoke the invitation? This action cannot be undone.' : 'remove the user from the team? This action cannot be undone.'}`,
+                    actionLabel: row.original.status === 'Invited' ? 'Revoke Invite' : 'Remove User',
+                    onSubmit: () => {
+                        form.delete(route('teams.manage.remove.team.member', row.original.id), {
+                            onSuccess: () => {
+                                emitter.emit(TEAMS_EVENTS.MEMBER_REMOVED)
+                            },
+                        })
+                    },
+                }).result
+            },
+        },
+    ]
+}

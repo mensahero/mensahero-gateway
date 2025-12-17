@@ -6,12 +6,13 @@ on:
       - develop
       - main
   pull_request:
+    types: [opened, reopened, synchronize, ready_for_review]
     branches:
-      - develop
-      - main
+      - '**'
 
 jobs:
   ci:
+    if: github.event.pull_request.draft == false
     name: Feature tests
     runs-on: ubuntu-latest
 
