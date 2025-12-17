@@ -144,8 +144,9 @@ class Team extends Model
      * @param string $email
      * @param string $role
      *
-     * @return void
      * @throws Exception
+     *
+     * @return void
      */
     public function acceptInvitation(string $email, string $role): void
     {

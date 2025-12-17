@@ -5,7 +5,6 @@ namespace App\Actions\Teams;
 use App\Models\Team;
 use App\Models\User;
 use Closure;
-use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
 class AddTeamMember
@@ -37,7 +36,6 @@ class AddTeamMember
 
     /**
      * Get the validation rules for adding a team member.
-     *
      */
     protected function rules(): array
     {
