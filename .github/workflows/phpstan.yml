@@ -16,7 +16,7 @@ on:
 
 jobs:
   phpstan:
-    if: github.event.pull_request.draft == false && github.base_ref != 'main'
+    if: github.event.pull_request.draft == false
     name: phpstan
     runs-on: ubuntu-latest
     timeout-minutes: 5
