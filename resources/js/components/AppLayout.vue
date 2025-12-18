@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { usePage } from '@inertiajs/vue3'
+import { router, usePage } from '@inertiajs/vue3'
 import type { BreadcrumbItem } from '@nuxt/ui'
 import { onMounted, watch } from 'vue'
 
@@ -10,30 +10,41 @@ const props = defineProps<{
 const toast = useToast()
 const inertiaPage = usePage()
 
-onMounted(() => {
-    if (inertiaPage.props.notification) {
+// onMounted(() => {
+//     if (inertiaPage.flash.notification) {
+//         toast.add({
+//             title: inertiaPage.flash.notification?.title,
+//             description: inertiaPage.flash.notification.message,
+//             color: inertiaPage.flash.notification?.color,
+//             icon: inertiaPage.flash.notification?.icon,
+//         })
+//     }
+// })
+//
+// watch(
+//     () => inertiaPage.flash.notification,
+//     (notification) => {
+//         if (notification) {
+//             toast.add({
+//                 title: notification.title,
+//                 description: notification.message,
+//                 color: notification.color,
+//                 icon: notification.icon,
+//             })
+//         }
+//     },
+// )
+router.on('flash', (event) => {
+    console.log(event)
+    if (event.detail.flash.notification) {
         toast.add({
-            title: inertiaPage.props.notification?.title,
-            description: inertiaPage.props.notification.message,
-            color: inertiaPage.props.notification?.color,
-            icon: inertiaPage.props.notification?.icon,
+            title: event.detail.flash.notification?.title,
+            description: event.detail.flash.notification.message,
+            color: event.detail.flash.notification?.color,
+            icon: event.detail.flash.notification?.icon,
         })
     }
 })
-
-watch(
-    () => inertiaPage.props.notification,
-    (notification) => {
-        if (notification) {
-            toast.add({
-                title: notification.title,
-                description: notification.message,
-                color: notification.color,
-                icon: notification.icon,
-            })
-        }
-    },
-)
 </script>
 
 <template>
