@@ -32,8 +32,8 @@
         "vue-tsc": "^2.2.12"
     },
     "dependencies": {
-        "@inertiajs/vue3": "^2.3.1",
-        "@nuxt/ui": "^4.2.1",
+        "@inertiajs/vue3": "^2.3.3",
+        "@nuxt/ui": "^4.3.0",
         "@vueuse/core": "^13.9.0",
         "axios": "^1.13.2",
         "dayjs": "^1.11.19",
